@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
@@ -26,9 +27,9 @@ const Navbar = () => {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <a href="#" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <span className="text-wastewise-green text-2xl font-bold">WasteWise</span>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
@@ -41,6 +42,9 @@ const Navbar = () => {
           <a href="#pricing" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
             Pricing
           </a>
+          <Link to="/dashboard" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+            Dashboard
+          </Link>
           <a href="#contact" className="btn-primary">
             Get Early Access
           </a>
@@ -82,6 +86,13 @@ const Navbar = () => {
           >
             Pricing
           </a>
+          <Link
+            to="/dashboard" 
+            className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Dashboard
+          </Link>
           <a 
             href="#contact" 
             className="btn-primary text-center"
