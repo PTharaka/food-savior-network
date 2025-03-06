@@ -1,12 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Menu, X, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +20,11 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <header
@@ -33,21 +42,42 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
-            Features
-          </a>
-          <a href="#how-it-works" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
-            How It Works
-          </a>
-          <a href="#pricing" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
-            Pricing
-          </a>
-          <Link to="/dashboard" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
-            Dashboard
-          </Link>
-          <a href="#contact" className="btn-primary">
-            Get Early Access
-          </a>
+          {isAuthenticated ? (
+            <>
+              <Link to="/dashboard" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+                Dashboard
+              </Link>
+              <Link to="/profile" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+                Profile
+              </Link>
+              <Button 
+                variant="outline"
+                className="text-wastewise-dark-gray hover:text-wastewise-red"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <a href="#features" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+                Features
+              </a>
+              <a href="#how-it-works" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+                How It Works
+              </a>
+              <a href="#pricing" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+                Pricing
+              </a>
+              <Link to="/login" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+                Login
+              </Link>
+              <Link to="/signup" className="btn-primary">
+                Get Early Access
+              </Link>
+            </>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -65,41 +95,72 @@ const Navbar = () => {
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       )}>
         <nav className="flex flex-col space-y-6">
-          <a 
-            href="#features" 
-            className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Features
-          </a>
-          <a 
-            href="#how-it-works" 
-            className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            How It Works
-          </a>
-          <a 
-            href="#pricing" 
-            className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Pricing
-          </a>
-          <Link
-            to="/dashboard" 
-            className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Dashboard
-          </Link>
-          <a 
-            href="#contact" 
-            className="btn-primary text-center"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Get Early Access
-          </a>
+          {isAuthenticated ? (
+            <>
+              <Link
+                to="/dashboard" 
+                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/profile" 
+                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Profile
+              </Link>
+              <button 
+                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-red transition-colors flex items-center"
+                onClick={() => {
+                  handleLogout();
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <LogOut className="h-5 w-5 mr-2" />
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <a 
+                href="#features" 
+                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Features
+              </a>
+              <a 
+                href="#how-it-works" 
+                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                How It Works
+              </a>
+              <a 
+                href="#pricing" 
+                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Pricing
+              </a>
+              <Link
+                to="/login" 
+                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+              <Link 
+                to="/signup" 
+                className="btn-primary text-center"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Get Early Access
+              </Link>
+            </>
+          )}
         </nav>
       </div>
     </header>

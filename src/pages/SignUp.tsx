@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useAuth } from '@/contexts/AuthContext';
 
 const businessTypes = [
   { value: 'restaurant', label: 'Restaurant' },
@@ -26,6 +26,7 @@ const SignUp = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { signup } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -47,15 +48,12 @@ const SignUp = () => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      console.log('Signup attempt with:', { 
-        businessName: formData.businessName,
-        email: formData.email,
-        businessType: formData.businessType
-      });
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await signup(
+        formData.email, 
+        formData.password, 
+        formData.businessName, 
+        formData.businessType
+      );
       
       toast.success('Account created successfully!');
       navigate('/dashboard');

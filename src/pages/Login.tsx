@@ -1,37 +1,31 @@
-
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate authentication - In a real app, this would call your auth API
     try {
-      console.log('Login attempt with:', { email });
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // For demo purposes, any email with password longer than 6 chars works
-      if (password.length >= 6) {
-        toast.success('Login successful!');
-        navigate('/dashboard');
-      } else {
-        toast.error('Invalid credentials');
-      }
+      await login(email, password);
+      toast.success('Login successful!');
+      navigate(from, { replace: true });
     } catch (error) {
-      toast.error('Login failed. Please try again.');
+      toast.error('Invalid credentials');
       console.error(error);
     } finally {
       setIsLoading(false);
