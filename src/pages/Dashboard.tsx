@@ -1,184 +1,191 @@
-
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Calendar, FileText, MapPin, Recycle, DollarSign, UserCircle2, Menu, AlertTriangle } from 'lucide-react';
-import WasteTracker from '@/components/dashboard/WasteTracker';
-import DonationManager from '@/components/dashboard/DonationManager';
-import TaxReports from '@/components/dashboard/TaxReports';
-import Analytics from '@/components/dashboard/Analytics';
-import AdvancedCharts from '@/components/dashboard/AdvancedCharts';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSubscription } from '@/contexts/SubscriptionContext';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import EcoBackground from '@/components/EcoBackground';
-import { Badge } from '@/components/ui/badge';
+import { ArrowRight, Check, PackageCheck, PieChart, Users, MessageSquare, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const { subscription, getRemainingEntries, getRemainingAlerts, isReachingLimit } = useSubscription();
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-wastewise-cream to-white overflow-x-hidden">
-      {/* 3D Ambient Background Elements */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
-        <EcoBackground />
-      </div>
-      
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 mb-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <button 
-              className="md:hidden mr-4 text-wastewise-dark-green"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <Menu size={24} />
-            </button>
-            <h1 className="text-2xl font-bold text-wastewise-dark-green flex items-center">
-              <Recycle className="h-6 w-6 mr-2 text-wastewise-green" />
-              WasteWise
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <Badge variant="outline" className="bg-wastewise-green/10 text-wastewise-dark-green font-medium hidden sm:flex">
-              {subscription.tier.charAt(0).toUpperCase() + subscription.tier.slice(1)} Plan
-            </Badge>
-            <div className="flex items-center gap-3">
-              <div className="text-sm text-wastewise-gray hidden md:block">
-                Welcome, {user?.email || 'User'}
-              </div>
-              <Button variant="outline" size="sm" className="flex items-center gap-1" onClick={() => navigate('/profile')}>
-                <UserCircle2 size={16} />
-                <span className="hidden sm:inline">Profile</span>
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <span className="hidden sm:inline">Logout</span>
-                <span className="sm:hidden">Exit</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-wastewise-cream">
+      <Navbar />
+      <div className="container mx-auto py-12 px-6">
+        <header className="mb-8">
+          <h1 className="heading-xl font-poppins text-wastewise-dark-gray">
+            Welcome back, {user.businessName || user.email}!
+          </h1>
+          <p className="text-wastewise-gray text-lg">
+            Here's a snapshot of your WasteWise dashboard.
+          </p>
+        </header>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-12 pt-6">
-        {/* Subscription Info */}
-        <div className="glass-panel p-5 mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-wastewise-dark-gray flex items-center gap-2">
-                Subscription Status
-                {subscription.isTrialing && (
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-700">Trial</Badge>
-                )}
-              </h2>
-              <p className="text-wastewise-gray">
-                {subscription.tier === 'free' ? 'Free Plan' : `${subscription.price}${subscription.discount ? ` (${subscription.discount})` : ''}`}
-                {subscription.isTrialing && subscription.trialEndsAt && ` • Trial ends on ${subscription.trialEndsAt}`}
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              {isReachingLimit('entries') && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-2 rounded-md flex items-center gap-2 text-sm">
-                  <AlertTriangle size={16} />
-                  <span>Nearing waste entries limit</span>
-                </div>
-              )}
-              
-              {subscription.tier !== 'enterprise' && (
-                <Button 
-                  className="bg-wastewise-green text-white hover:bg-wastewise-dark-green w-full sm:w-auto"
-                  onClick={() => navigate('/pricing')}
-                >
-                  Upgrade Plan
-                </Button>
-              )}
-            </div>
-          </div>
-          
-          {subscription.tier === 'free' || subscription.tier === 'starter' ? (
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-wastewise-dark-gray">Waste Entries</span>
-                  <span className="text-wastewise-gray">
-                    {subscription.entriesUsed} / {subscription.features.maxWasteEntries === 0 ? '∞' : subscription.features.maxWasteEntries}
-                  </span>
-                </div>
-                <Progress 
-                  value={subscription.features.maxWasteEntries === 0 ? 0 : (subscription.entriesUsed / subscription.features.maxWasteEntries) * 100} 
-                  className="h-2 bg-wastewise-light-gray/30"
-                  indicatorClassName={isReachingLimit('entries') ? 'bg-amber-500' : 'bg-wastewise-green'}
-                />
-              </div>
-              
-              {!subscription.features.unlimitedAlerts && (
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-wastewise-dark-gray">Donation Alerts</span>
-                    <span className="text-wastewise-gray">
-                      {subscription.alertsUsed} / {subscription.features.donationAlerts === 0 ? '∞' : subscription.features.donationAlerts}
-                    </span>
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="glass-panel">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-wastewise-dark-gray flex items-center gap-2">
+                <PieChart className="mr-2 h-5 w-5 text-wastewise-green" />
+                Waste Reduction
+              </CardTitle>
+              <CardDescription className="text-wastewise-gray">Track your progress</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-wastewise-dark-green">68%</div>
+              <Progress value={68} className="h-2 bg-wastewise-light-gray/30">
+                <div className="h-full bg-wastewise-green rounded-full" style={{ width: '68%' }} />
+              </Progress>
+              <p className="text-sm text-wastewise-gray mt-2">vs. last month</p>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-panel">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-wastewise-dark-gray flex items-center gap-2">
+                <PackageCheck className="mr-2 h-5 w-5 text-wastewise-green" />
+                Donations
+              </CardTitle>
+              <CardDescription className="text-wastewise-gray">Food sent to those in need</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-wastewise-dark-green">234 kg</div>
+              <Progress value={45} className="h-2 bg-wastewise-light-gray/30">
+                <div className="h-full bg-wastewise-green rounded-full" style={{ width: '45%' }} />
+              </Progress>
+              <p className="text-sm text-wastewise-gray mt-2">vs. last month</p>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-panel">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-wastewise-dark-gray flex items-center gap-2">
+                <Users className="mr-2 h-5 w-5 text-wastewise-green" />
+                Community Impact
+              </CardTitle>
+              <CardDescription className="text-wastewise-gray">Meals provided</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-wastewise-dark-green">876</div>
+              <Progress value={75} className="h-2 bg-wastewise-light-gray/30">
+                <div className="h-full bg-wastewise-green rounded-full" style={{ width: '75%' }} />
+              </Progress>
+              <p className="text-sm text-wastewise-gray mt-2">vs. last month</p>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-panel">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-wastewise-dark-gray flex items-center gap-2">
+                <Check className="mr-2 h-5 w-5 text-wastewise-green" />
+                Tax Benefits
+              </CardTitle>
+              <CardDescription className="text-wastewise-gray">Claimed this year</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-wastewise-dark-green">$1,250</div>
+              <Progress value={90} className="h-2 bg-wastewise-light-gray/30">
+                <div className="h-full bg-wastewise-green rounded-full" style={{ width: '90%' }} />
+              </Progress>
+              <p className="text-sm text-wastewise-gray mt-2">vs. last year</p>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className="glass-panel lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-wastewise-dark-gray">
+                Recent Activity
+              </CardTitle>
+              <CardDescription className="text-wastewise-gray">
+                Latest updates and insights
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="divide-y divide-wastewise-light-gray/30">
+                <li className="py-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium text-wastewise-dark-gray">
+                        Donated 50 kg of food to Local Shelter
+                      </p>
+                      <p className="text-sm text-wastewise-gray">
+                        2 hours ago
+                      </p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-wastewise-green" />
                   </div>
-                  <Progress 
-                    value={subscription.features.donationAlerts === 0 ? 0 : (subscription.alertsUsed / subscription.features.donationAlerts) * 100} 
-                    className="h-2 bg-wastewise-light-gray/30"
-                    indicatorClassName={isReachingLimit('alerts') ? 'bg-amber-500' : 'bg-wastewise-green'}
-                  />
-                </div>
-              )}
-            </div>
-          ) : null}
-        </div>
+                </li>
+                <li className="py-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium text-wastewise-dark-gray">
+                        Generated tax report for Q3
+                      </p>
+                      <p className="text-sm text-wastewise-gray">
+                        Yesterday
+                      </p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-wastewise-green" />
+                  </div>
+                </li>
+                <li className="py-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium text-wastewise-dark-gray">
+                        New insights on waste trends
+                      </p>
+                      <p className="text-sm text-wastewise-gray">
+                        3 days ago
+                      </p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-wastewise-green" />
+                  </div>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
 
-        <Tabs defaultValue="waste" className="w-full">
-          <TabsList className="mb-8 bg-wastewise-light-gray/30 p-1 rounded-lg w-full max-w-3xl mx-auto">
-            <TabsTrigger value="waste" className="flex items-center gap-1.5 flex-1">
-              <Recycle size={16} />
-              <span>Waste Tracking</span>
-            </TabsTrigger>
-            <TabsTrigger value="donations" className="flex items-center gap-1.5 flex-1">
-              <MapPin size={16} />
-              <span>Donations</span>
-            </TabsTrigger>
-            <TabsTrigger value="tax" className="flex items-center gap-1.5 flex-1">
-              <FileText size={16} />
-              <span>Tax Reports</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-1.5 flex-1">
-              <BarChart3 size={16} />
-              <span>Analytics</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="bg-white/80 backdrop-blur-md rounded-xl shadow-sm p-6 mb-6">
-            <TabsContent value="waste">
-              <WasteTracker />
-            </TabsContent>
-            <TabsContent value="donations">
-              <DonationManager />
-            </TabsContent>
-            <TabsContent value="tax">
-              <TaxReports />
-            </TabsContent>
-            <TabsContent value="analytics">
-              <Analytics />
-              <div className="mt-8">
-                <AdvancedCharts />
-              </div>
-            </TabsContent>
-          </div>
-        </Tabs>
-      </main>
+          <Card className="glass-panel">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-wastewise-dark-gray">
+                Quick Actions
+              </CardTitle>
+              <CardDescription className="text-wastewise-gray">
+                Manage your account
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <Button variant="secondary" className="justify-start" onClick={() => navigate('/profile')}>
+                <Settings className="mr-2 h-4 w-4" />
+                Account Settings
+              </Button>
+              <Button variant="secondary" className="justify-start">
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Contact Support
+              </Button>
+              <Button variant="secondary" className="justify-start">
+                <HelpCircle className="mr-2 h-4 w-4" />
+                Help & FAQs
+              </Button>
+              <Button variant="destructive" className="justify-start" onClick={logout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
+      <Footer />
     </div>
   );
 };
