@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -8,17 +7,14 @@ import {
   Check, 
   PackageCheck, 
   PieChart, 
-  Users, 
-  MessageSquare, 
-  Settings, 
-  HelpCircle, 
-  LogOut,
-  Lock,
+  AlertCircle,
   BarChart,
   FileText,
   Truck,
   Award,
-  AlertCircle
+  Menu,
+  X,
+  Lock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';

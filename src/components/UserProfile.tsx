@@ -7,8 +7,14 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { X } from 'lucide-react';
 
-const UserProfile = () => {
+interface UserProfileProps {
+  isModal?: boolean;
+  onClose?: () => void;
+}
+
+const UserProfile = ({ isModal, onClose }: UserProfileProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     businessName: "Green Leaf Restaurant",
@@ -36,42 +42,54 @@ const UserProfile = () => {
     setTimeout(() => {
       toast.success("Profile updated successfully");
       setIsEditing(false);
+      if (onClose) {
+        setTimeout(onClose, 1000);
+      }
     }, 800);
   };
 
   return (
-    <div className="glass-panel p-6 max-w-3xl mx-auto">
+    <div className={isModal ? "" : "glass-panel p-6 max-w-3xl mx-auto"}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-wastewise-dark-green">Business Profile</h2>
-        {!isEditing ? (
-          <Button onClick={() => setIsEditing(true)} variant="outline">
-            Edit Profile
-          </Button>
-        ) : (
-          <Button onClick={() => setIsEditing(false)} variant="outline">
-            Cancel
-          </Button>
-        )}
+        <h2 className="text-xl font-bold text-wastewise-dark-green">Business Profile</h2>
+        <div className="flex gap-2">
+          {!isEditing ? (
+            <Button onClick={() => setIsEditing(true)} variant="outline" size={isModal ? "sm" : "default"}>
+              Edit Profile
+            </Button>
+          ) : (
+            <Button onClick={() => setIsEditing(false)} variant="outline" size={isModal ? "sm" : "default"}>
+              Cancel
+            </Button>
+          )}
+          {isModal && onClose && (
+            <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
-        <div className="bg-wastewise-green/20 h-16 w-16 rounded-full flex items-center justify-center text-2xl font-bold text-wastewise-green">
-          {formData.businessName.charAt(0)}
-        </div>
-        <div>
-          <h3 className="text-xl font-semibold">{formData.businessName}</h3>
-          <div className="flex gap-2 mt-1">
-            <Badge variant="secondary">Restaurant</Badge>
-            <Badge variant="outline">Premium Plan</Badge>
+      {!isModal && (
+        <div className="flex items-center gap-4 mb-6">
+          <div className="bg-wastewise-green/20 h-16 w-16 rounded-full flex items-center justify-center text-2xl font-bold text-wastewise-green">
+            {formData.businessName.charAt(0)}
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold">{formData.businessName}</h3>
+            <div className="flex gap-2 mt-1">
+              <Badge variant="secondary">Restaurant</Badge>
+              <Badge variant="outline">Premium Plan</Badge>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <Separator className="my-6" />
+      <Separator className="my-4" />
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={isModal ? "max-h-[60vh] overflow-y-auto pr-2" : ""}>
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="businessName">Business Name</Label>
               <Input
@@ -120,9 +138,9 @@ const UserProfile = () => {
             </div>
           </div>
 
-          <Separator className="my-6" />
+          <Separator className="my-4" />
 
-          <h3 className="text-xl font-semibold mb-4">Notification Preferences</h3>
+          <h3 className="text-lg font-semibold mb-4">Notification Preferences</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
