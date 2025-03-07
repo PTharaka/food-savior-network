@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
@@ -5,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useAuth } from '@/contexts/AuthContext';
+import { InfoCircle } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -30,6 +32,11 @@ const Login = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fillDemoCredentials = () => {
+    setEmail('demo@wastewise.com');
+    setPassword('demo123');
   };
 
   return (
@@ -87,6 +94,16 @@ const Login = () => {
               Sign up
             </Link>
           </p>
+        </div>
+
+        <div className="mt-6 p-3 bg-wastewise-green/10 rounded-lg border border-wastewise-green/20">
+          <button 
+            onClick={fillDemoCredentials}
+            className="flex items-center justify-center w-full text-sm text-wastewise-dark-green hover:text-wastewise-green gap-2"
+          >
+            <InfoCircle size={16} />
+            <span>Use demo account: demo@wastewise.com / demo123</span>
+          </button>
         </div>
       </div>
     </div>

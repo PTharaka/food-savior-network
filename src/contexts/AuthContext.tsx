@@ -38,6 +38,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate authentication API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // Check for demo credentials
+      if (email === 'demo@wastewise.com' && password === 'demo123') {
+        const demoUser = {
+          id: 'user_demo',
+          email: 'demo@wastewise.com',
+          businessName: 'Demo Restaurant',
+          businessType: 'restaurant'
+        };
+        setUser(demoUser);
+        localStorage.setItem('wastewise_user', JSON.stringify(demoUser));
+        return;
+      }
+      
       // In a real app, validate credentials with backend
       // For demo, any email with password longer than 6 chars works
       if (password.length >= 6) {
