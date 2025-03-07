@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from "sonner";
 
 type User = {
   id: string;
@@ -48,6 +49,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setUser(demoUser);
         localStorage.setItem('wastewise_user', JSON.stringify(demoUser));
+        toast.success("Logged in as Free Tier Demo User");
+        return;
+      }
+      
+      // Check for starter tier demo
+      if (email === 'starter@wastewise.com' && password === 'starter123') {
+        const starterUser = {
+          id: 'user_starter',
+          email: 'starter@wastewise.com',
+          businessName: 'Starter Restaurant',
+          businessType: 'restaurant'
+        };
+        setUser(starterUser);
+        localStorage.setItem('wastewise_user', JSON.stringify(starterUser));
+        toast.success("Logged in as Starter Tier Demo User");
+        return;
+      }
+      
+      // Check for pro tier demo
+      if (email === 'pro@wastewise.com' && password === 'pro123') {
+        const proUser = {
+          id: 'user_pro',
+          email: 'pro@wastewise.com',
+          businessName: 'Pro Restaurant',
+          businessType: 'restaurant'
+        };
+        setUser(proUser);
+        localStorage.setItem('wastewise_user', JSON.stringify(proUser));
+        toast.success("Logged in as Pro Tier Demo User");
+        return;
+      }
+      
+      // Check for trial demo
+      if (email === 'trial@wastewise.com' && password === 'trial123') {
+        const trialUser = {
+          id: 'user_trial',
+          email: 'trial@wastewise.com',
+          businessName: 'Trial Restaurant',
+          businessType: 'restaurant'
+        };
+        setUser(trialUser);
+        localStorage.setItem('wastewise_user', JSON.stringify(trialUser));
+        toast.success("Logged in as Trial User");
         return;
       }
       
@@ -61,9 +105,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setUser(newUser);
         localStorage.setItem('wastewise_user', JSON.stringify(newUser));
+        toast.success("Logged in successfully");
       } else {
         throw new Error('Invalid credentials');
       }
+    } catch (error) {
+      toast.error("Failed to login. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -83,6 +130,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       setUser(newUser);
       localStorage.setItem('wastewise_user', JSON.stringify(newUser));
+      toast.success("Account created successfully!");
+    } catch (error) {
+      toast.error("Failed to create account. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -91,6 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('wastewise_user');
+    toast.success("Logged out successfully");
   };
 
   return (
