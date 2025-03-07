@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,14 +62,14 @@ const TaxReports: React.FC = () => {
     try {
       let newDocument: TaxDocument;
       
-      // Mock data for demonstration
+      // Mock data for demonstration - fixed with proper status type
       const mockDonations = [
         {
           id: '1',
           organization: 'City Food Bank',
           items: 'Bread, Vegetables',
           quantity: '10 kg',
-          status: 'completed',
+          status: 'completed' as const, // Using 'as const' to specify the exact type
           date: '2023-11-10',
           address: '123 Main St, City',
           estimatedValue: 45.50
@@ -80,7 +79,7 @@ const TaxReports: React.FC = () => {
           organization: 'Community Pantry',
           items: 'Canned Goods',
           quantity: '15 kg',
-          status: 'completed',
+          status: 'completed' as const, // Using 'as const' to specify the exact type
           date: '2023-11-01',
           address: '789 Pine Rd, City',
           estimatedValue: 60.25
