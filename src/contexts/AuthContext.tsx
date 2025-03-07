@@ -2,11 +2,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "sonner";
 
+export type SubscriptionTier = 'free' | 'starter' | 'pro' | 'enterprise';
+
 type User = {
   id: string;
   email: string;
   businessName?: string;
   businessType?: string;
+  subscriptionTier?: SubscriptionTier;
 } | null;
 
 interface AuthContextType {
@@ -14,7 +17,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, businessName: string, businessType: string) => Promise<void>;
+  signup: (email: string, password: string, businessName: string, businessType: string, subscriptionTier?: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -45,7 +48,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: 'user_demo',
           email: 'demo@wastewise.com',
           businessName: 'Demo Restaurant',
-          businessType: 'restaurant'
+          businessType: 'restaurant',
+          subscriptionTier: 'free' as SubscriptionTier
         };
         setUser(demoUser);
         localStorage.setItem('wastewise_user', JSON.stringify(demoUser));
@@ -53,13 +57,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
+      // Check for free tier demo
+      if (email === 'free@wastewise.com' && password === 'demo123') {
+        const freeUser = {
+          id: 'user_free',
+          email: 'free@wastewise.com',
+          businessName: 'Free Restaurant',
+          businessType: 'restaurant',
+          subscriptionTier: 'free' as SubscriptionTier
+        };
+        setUser(freeUser);
+        localStorage.setItem('wastewise_user', JSON.stringify(freeUser));
+        toast.success("Logged in as Free Tier Demo User");
+        return;
+      }
+      
       // Check for starter tier demo
-      if (email === 'starter@wastewise.com' && password === 'starter123') {
+      if (email === 'starter@wastewise.com' && password === 'demo123') {
         const starterUser = {
           id: 'user_starter',
           email: 'starter@wastewise.com',
           businessName: 'Starter Restaurant',
-          businessType: 'restaurant'
+          businessType: 'restaurant',
+          subscriptionTier: 'starter' as SubscriptionTier
         };
         setUser(starterUser);
         localStorage.setItem('wastewise_user', JSON.stringify(starterUser));
@@ -68,12 +88,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Check for pro tier demo
-      if (email === 'pro@wastewise.com' && password === 'pro123') {
+      if (email === 'pro@wastewise.com' && password === 'demo123') {
         const proUser = {
           id: 'user_pro',
           email: 'pro@wastewise.com',
           businessName: 'Pro Restaurant',
-          businessType: 'restaurant'
+          businessType: 'restaurant',
+          subscriptionTier: 'pro' as SubscriptionTier
         };
         setUser(proUser);
         localStorage.setItem('wastewise_user', JSON.stringify(proUser));
@@ -81,17 +102,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
+      // Check for enterprise tier demo
+      if (email === 'enterprise@wastewise.com' && password === 'demo123') {
+        const enterpriseUser = {
+          id: 'user_enterprise',
+          email: 'enterprise@wastewise.com',
+          businessName: 'Enterprise Corp',
+          businessType: 'food_distributor',
+          subscriptionTier: 'enterprise' as SubscriptionTier
+        };
+        setUser(enterpriseUser);
+        localStorage.setItem('wastewise_user', JSON.stringify(enterpriseUser));
+        toast.success("Logged in as Enterprise Tier Demo User");
+        return;
+      }
+      
       // Check for trial demo
-      if (email === 'trial@wastewise.com' && password === 'trial123') {
+      if (email === 'trial@wastewise.com' && password === 'demo123') {
         const trialUser = {
           id: 'user_trial',
           email: 'trial@wastewise.com',
           businessName: 'Trial Restaurant',
-          businessType: 'restaurant'
+          businessType: 'restaurant',
+          subscriptionTier: 'pro' as SubscriptionTier
         };
         setUser(trialUser);
         localStorage.setItem('wastewise_user', JSON.stringify(trialUser));
-        toast.success("Logged in as Trial User");
+        toast.success("Logged in as Trial User (Pro features)");
         return;
       }
       
@@ -101,7 +138,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const newUser = {
           id: `user_${Date.now()}`,
           email,
-          businessName: 'Demo Business'
+          businessName: 'Demo Business',
+          subscriptionTier: 'free' as SubscriptionTier
         };
         setUser(newUser);
         localStorage.setItem('wastewise_user', JSON.stringify(newUser));
@@ -116,17 +154,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signup = async (email: string, password: string, businessName: string, businessType: string) => {
+  const signup = async (email: string, password: string, businessName: string, businessType: string, subscriptionTier: string = 'free') => {
     setIsLoading(true);
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      const tier = (subscriptionTier as SubscriptionTier) || 'free';
+      
       const newUser = {
         id: `user_${Date.now()}`,
         email,
         businessName,
-        businessType
+        businessType,
+        subscriptionTier: tier
       };
       setUser(newUser);
       localStorage.setItem('wastewise_user', JSON.stringify(newUser));
