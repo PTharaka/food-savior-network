@@ -19,6 +19,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				poppins: ['Poppins', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -67,6 +71,8 @@ export default {
 					green: '#4CAF50',
 					'light-green': '#8BC34A',
 					'dark-green': '#2E7D32',
+					'soft-green': '#E8F5E9',
+					'leaf': '#AED581',
 					cream: '#F9F7F4',
 					beige: '#F5F3F0',
 					gray: '#757575',
@@ -107,6 +113,10 @@ export default {
 				pulse: {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.5' }
+				},
+				float: {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
 				}
 			},
 			animation: {
@@ -116,10 +126,13 @@ export default {
 				'fade-in-up': 'fade-in-up 0.7s ease-out',
 				'slide-in-right': 'slide-in-right 0.5s ease-out',
 				'slide-in-left': 'slide-in-left 0.5s ease-out',
-				pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+				pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				float: 'float 6s ease-in-out infinite'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+				'eco-gradient': 'linear-gradient(135deg, #8BC34A 0%, #4CAF50 100%)',
 				'hero-pattern': 'url("/hero-pattern.svg")'
 			}
 		}

@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -45,12 +45,13 @@
   }
 
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Poppins', 'Inter', system-ui, sans-serif;
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
-    @apply bg-wastewise-cream text-wastewise-dark-gray font-medium antialiased;
+    @apply bg-wastewise-cream text-wastewise-dark-gray font-medium antialiased overflow-x-hidden;
   }
 
   ::-webkit-scrollbar {
@@ -68,11 +69,19 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-wastewise-green;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-poppins;
+  }
 }
 
 @layer components {
   .glass-panel {
     @apply bg-white/80 backdrop-blur-md border border-white/30 rounded-2xl shadow-sm;
+  }
+  
+  .eco-panel {
+    @apply bg-white/90 backdrop-blur-md border border-wastewise-light-green/20 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300;
   }
   
   .heading-xl {
@@ -88,7 +97,7 @@
   }
   
   .btn-primary {
-    @apply bg-wastewise-green hover:bg-wastewise-dark-green text-white rounded-full px-6 py-3 font-medium transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg;
+    @apply bg-gradient-to-r from-wastewise-green to-wastewise-light-green hover:from-wastewise-dark-green hover:to-wastewise-green text-white rounded-full px-6 py-3 font-medium transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg;
   }
   
   .btn-secondary {
@@ -98,4 +107,77 @@
   .card-hover {
     @apply transition-all duration-300 hover:shadow-md hover:translate-y-[-5px];
   }
+
+  .eco-card {
+    @apply bg-white/80 backdrop-blur-sm border border-wastewise-light-green/20 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:border-wastewise-green/30;
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-pulse-light {
+    animation: pulse-light 6s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse-light {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 195, 74, 0.1);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(139, 195, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 195, 74, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Leaf animation for backgrounds */
+.leaf {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(139, 195, 74, 0.1);
+  border-radius: 0 70% 0 70%;
 }
