@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -309,7 +310,10 @@ const SignUp = () => {
                     <Button
                       type="button"
                       className="bg-wastewise-green hover:bg-wastewise-dark-green"
-                      onClick={() => document.querySelector('[data-value="plan"]')?.click()}
+                      onClick={() => {
+                        const planTab = document.querySelector('[data-value="plan"]') as HTMLElement;
+                        if (planTab) planTab.click();
+                      }}
                     >
                       Continue to Plans <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -463,7 +467,10 @@ const SignUp = () => {
                     <Button
                       type="button" 
                       variant="outline"
-                      onClick={() => document.querySelector('[data-value="account"]')?.click()}
+                      onClick={() => {
+                        const accountTab = document.querySelector('[data-value="account"]') as HTMLElement;
+                        if (accountTab) accountTab.click();
+                      }}
                     >
                       Back to Account Details
                     </Button>
