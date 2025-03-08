@@ -7,15 +7,13 @@ import { Link } from 'react-router-dom';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
 const ProfilePage = () => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
-
   return (
     <div className="h-screen flex overflow-hidden bg-wastewise-cream/50">
-      <div className={`${sidebarOpen ? 'block' : 'hidden'} md:block fixed md:relative h-full w-64 z-40 md:z-0 bg-white`}>
+      <div className="fixed md:relative h-full w-64 z-40 md:z-0 bg-white">
         <DashboardSidebar />
       </div>
       
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden ml-64">
         <header className="bg-white shadow-sm py-4 px-6 mb-6">
           <div className="max-w-7xl mx-auto flex items-center">
             <Link to="/dashboard">

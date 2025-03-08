@@ -8,17 +8,18 @@ import {
   Package,
   FileText,
   Users,
-  LifeBuoy,
   Settings,
   LogOut,
-  Home,
-  Sparkles,
   Globe,
   LayoutDashboard,
-  MessagesSquare
+  Recycle,
+  BadgeDollarSign,
+  ClipboardCheck,
+  Sparkles,
+  UserRound,
+  History
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface NavItemProps {
@@ -98,65 +99,90 @@ export const DashboardSidebar = ({ className }: { className?: string }) => {
           />
           
           <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
-            Social Manager
+            Waste Management
           </div>
           
           <NavItem 
-            href="/dashboard/connected-media" 
-            icon={<Globe className="h-4 w-4" />} 
-            label="Connected medias" 
-            active={path.includes('/connected-media')} 
-          />
-          <NavItem 
             href="/dashboard/waste-tracking" 
-            icon={<BarChart3 className="h-4 w-4" />} 
-            label="Posts planner" 
+            icon={<Recycle className="h-4 w-4" />} 
+            label="Waste Tracking" 
             active={path.includes('/waste-tracking')} 
-          />
-          <NavItem 
-            href="/dashboard/content-planner" 
-            icon={<FileText className="h-4 w-4" />} 
-            label="Content planner" 
-            active={path.includes('/content-planner')} 
           />
           <NavItem 
             href="/dashboard/donations" 
             icon={<Package className="h-4 w-4" />} 
-            label="Draft" 
+            label="Donation Management" 
             active={path.includes('/donations')} 
+          />
+          <NavItem 
+            href="/dashboard/tax-reports" 
+            icon={<ClipboardCheck className="h-4 w-4" />} 
+            label="Tax Compliance" 
+            active={path.includes('/tax-reports')} 
+          />
+          <NavItem 
+            href="/dashboard/analytics" 
+            icon={<BarChart3 className="h-4 w-4" />} 
+            label="Analytics" 
+            active={path.includes('/analytics')} 
           />
           
           <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
-            Setting and Setup
+            Advanced Features
+          </div>
+          
+          <NavItem 
+            href="/dashboard/predictions" 
+            icon={<Sparkles className="h-4 w-4" />} 
+            label="AI Predictions" 
+            active={path.includes('/predictions')} 
+            requiredTier="pro"
+          />
+          <NavItem 
+            href="/dashboard/leaderboard" 
+            icon={<Users className="h-4 w-4" />} 
+            label="Employee Leaderboard" 
+            active={path.includes('/leaderboard')} 
+            requiredTier="starter"
+          />
+          <NavItem 
+            href="/dashboard/community-impact" 
+            icon={<Globe className="h-4 w-4" />} 
+            label="Community Impact" 
+            active={path.includes('/community-impact')} 
+          />
+          <NavItem 
+            href="/dashboard/history" 
+            icon={<History className="h-4 w-4" />} 
+            label="Activity History" 
+            active={path.includes('/history')} 
+          />
+          
+          <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
+            Account
           </div>
           
           <NavItem 
             href="/dashboard/settings" 
             icon={<Settings className="h-4 w-4" />} 
-            label="Business settings" 
+            label="Settings" 
             active={path.includes('/settings')} 
           />
           <NavItem 
-            href="/dashboard/team" 
-            icon={<Users className="h-4 w-4" />} 
-            label="My team mates" 
-            active={path.includes('/team')} 
-          />
-          <NavItem 
             href="/dashboard/subscription" 
-            icon={<Sparkles className="h-4 w-4" />} 
-            label="Subscription & billing" 
+            icon={<BadgeDollarSign className="h-4 w-4" />} 
+            label="Subscription" 
             active={path.includes('/subscription')} 
-            requiredTier="starter"
           />
         </nav>
       </div>
 
       <div className="mt-auto p-4 border-t border-wastewise-light-gray/20 flex items-center">
-        <div className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green">
+        <div className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer" 
+             onClick={() => window.location.href = '/dashboard/settings'}>
           {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
         </div>
-        <div className="flex flex-col ml-3">
+        <div className="flex flex-col ml-3 cursor-pointer" onClick={() => window.location.href = '/dashboard/settings'}>
           <span className="font-medium text-wastewise-dark-gray text-sm">
             {user?.businessName || user?.email?.split('@')[0] || 'User'}
           </span>
