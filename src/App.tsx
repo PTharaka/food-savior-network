@@ -12,9 +12,6 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import About from "./pages/About";
-import ProfilePage from "./pages/ProfilePage";
-import PricingPage from "./pages/PricingPage";
 import './App.css';
 
 const queryClient = new QueryClient();
@@ -32,8 +29,6 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/pricing" element={<PricingPage />} />
               
               {/* Protected routes */}
               <Route path="/dashboard" element={
@@ -43,12 +38,7 @@ const App = () => (
               } />
               <Route path="/dashboard/settings" element={
                 <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <ProfilePage />
+                  <Dashboard />
                 </ProtectedRoute>
               } />
               

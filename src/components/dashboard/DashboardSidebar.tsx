@@ -69,7 +69,12 @@ const NavItem = ({ icon, label, href, active, disabled, requiredTier, onClick }:
   );
 };
 
-export const DashboardSidebar = ({ className }: { className?: string }) => {
+interface DashboardSidebarProps {
+  className?: string;
+  onProfileClick?: () => void;
+}
+
+export const DashboardSidebar = ({ className, onProfileClick }: DashboardSidebarProps) => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const { subscription } = useSubscription();
@@ -163,10 +168,11 @@ export const DashboardSidebar = ({ className }: { className?: string }) => {
           </div>
           
           <NavItem 
-            href="/dashboard/settings" 
+            href="#" 
             icon={<Settings className="h-4 w-4" />} 
             label="Settings" 
-            active={path.includes('/settings')} 
+            active={path.includes('/settings')}
+            onClick={onProfileClick}
           />
           <NavItem 
             href="/dashboard/subscription" 
@@ -178,11 +184,16 @@ export const DashboardSidebar = ({ className }: { className?: string }) => {
       </div>
 
       <div className="mt-auto p-4 border-t border-wastewise-light-gray/20 flex items-center">
-        <div className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer" 
-             onClick={() => window.location.href = '/dashboard/settings'}>
+        <div 
+          className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer" 
+          onClick={onProfileClick}
+        >
           {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
         </div>
-        <div className="flex flex-col ml-3 cursor-pointer" onClick={() => window.location.href = '/dashboard/settings'}>
+        <div 
+          className="flex flex-col ml-3 cursor-pointer" 
+          onClick={onProfileClick}
+        >
           <span className="font-medium text-wastewise-dark-gray text-sm">
             {user?.businessName || user?.email?.split('@')[0] || 'User'}
           </span>

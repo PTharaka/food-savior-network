@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Menu, X, LogOut } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,8 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +26,19 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    setMobileMenuOpen(false);
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+      return;
+    }
+    
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -47,9 +62,6 @@ const Navbar = () => {
               <Link to="/dashboard" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
                 Dashboard
               </Link>
-              <Link to="/profile" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
-                Profile
-              </Link>
               <Button 
                 variant="outline"
                 className="text-wastewise-dark-gray hover:text-wastewise-red"
@@ -61,15 +73,30 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <a href="#features" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+              <button 
+                onClick={() => scrollToSection('features')} 
+                className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+              >
                 Features
-              </a>
-              <a href="#how-it-works" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+              </button>
+              <button 
+                onClick={() => scrollToSection('how-it-works')} 
+                className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+              >
                 How It Works
-              </a>
-              <a href="#pricing" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
+              </button>
+              <button 
+                onClick={() => scrollToSection('pricing')} 
+                className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+              >
                 Pricing
-              </a>
+              </button>
+              <button 
+                onClick={() => scrollToSection('about')} 
+                className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+              >
+                About Us
+              </button>
               <Link to="/login" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
                 Login
               </Link>
@@ -104,13 +131,6 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
-              <Link
-                to="/profile" 
-                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Profile
-              </Link>
               <button 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-red transition-colors flex items-center"
                 onClick={() => {
@@ -124,27 +144,30 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <a 
-                href="#features" 
+              <button 
+                onClick={() => scrollToSection('features')} 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
               >
                 Features
-              </a>
-              <a 
-                href="#how-it-works" 
+              </button>
+              <button 
+                onClick={() => scrollToSection('how-it-works')} 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
               >
                 How It Works
-              </a>
-              <a 
-                href="#pricing" 
+              </button>
+              <button 
+                onClick={() => scrollToSection('pricing')} 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
               >
                 Pricing
-              </a>
+              </button>
+              <button 
+                onClick={() => scrollToSection('about')} 
+                className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+              >
+                About Us
+              </button>
               <Link
                 to="/login" 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"

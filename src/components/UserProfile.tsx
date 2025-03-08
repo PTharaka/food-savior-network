@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { X } from 'lucide-react';
+import { X, ArrowLeft } from 'lucide-react';
 
 interface UserProfileProps {
   isModal?: boolean;
@@ -51,7 +51,20 @@ const UserProfile = ({ isModal, onClose }: UserProfileProps) => {
   return (
     <div className={isModal ? "" : "glass-panel p-6 max-w-3xl mx-auto"}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-wastewise-dark-green">Business Profile</h2>
+        <div className="flex items-center gap-2">
+          {onClose && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose} 
+              className="mr-2"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back to Dashboard
+            </Button>
+          )}
+          <h2 className="text-xl font-bold text-wastewise-dark-green">Business Profile</h2>
+        </div>
         <div className="flex gap-2">
           {!isEditing ? (
             <Button onClick={() => setIsEditing(true)} variant="outline" size={isModal ? "sm" : "default"}>
