@@ -10,6 +10,8 @@ import EngagementMetrics from '@/components/dashboard/EngagementMetrics';
 import TopGeographies from '@/components/dashboard/TopGeographies';
 import PostPlanner from '@/components/dashboard/PostPlanner';
 import CommentsSection from '@/components/dashboard/CommentsSection';
+import WasteTrackingMetrics from '@/components/dashboard/WasteTrackingMetrics';
+import DonationAlerts from '@/components/dashboard/DonationAlerts';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -34,13 +36,13 @@ const Dashboard: React.FC = () => {
           <SocialOverviewChart />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <EngagementMetrics />
+            <WasteTrackingMetrics />
             <TopGeographies />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <PostPlanner />
-            <CommentsSection />
+            <DonationAlerts />
+            <EngagementMetrics />
           </div>
         </main>
       </div>
