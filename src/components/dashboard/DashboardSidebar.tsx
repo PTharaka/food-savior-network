@@ -30,7 +30,11 @@ interface NavItemProps {
 
 const NavItem = ({ icon, label, href, active, disabled, requiredTier, onClick }: NavItemProps) => {
   const { subscription } = useSubscription();
-  const isLocked = requiredTier && !subscription.isFeatureAvailable(requiredTier);
+  // The issue is here. We need to use the isFeatureAvailable function from the subscription context, not the subscription object directly
+  const isLocked = requiredTier && subscription && !subscription.tier ? true : requiredTier && subscription.tier ? 
+    !['free', 'starter', 'pro', 'enterprise'].includes(subscription.tier) || 
+    (['free', 'starter', 'pro', 'enterprise'].indexOf(subscription.tier) < 
+     ['free', 'starter', 'pro', 'enterprise'].indexOf(requiredTier as string)) : true;
   
   return (
     <Link

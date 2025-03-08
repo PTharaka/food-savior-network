@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -14,7 +15,12 @@ import {
   Award,
   Menu,
   X,
-  Lock
+  Lock,
+  Users,
+  Settings,
+  MessageSquare,
+  HelpCircle,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
