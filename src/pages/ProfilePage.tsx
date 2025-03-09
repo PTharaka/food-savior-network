@@ -9,7 +9,7 @@ import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 // This component is not being used but we'll fix it anyway
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [activeView, useState]('profile');
+  const [activeView, setActiveView] = useState('profile');
   
   return (
     <div className="h-screen flex overflow-hidden bg-wastewise-cream/50">
