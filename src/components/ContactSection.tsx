@@ -1,21 +1,23 @@
-
 import React, { useState } from 'react';
 import { SendIcon, CheckCircle } from 'lucide-react';
-
 const ContactSection: React.FC = () => {
   const [formState, setFormState] = useState({
     name: '',
     email: '',
     company: '',
-    message: '',
+    message: ''
   });
   const [submitted, setSubmitted] = useState(false);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
+    const {
+      name,
+      value
+    } = e.target;
+    setFormState(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real app, you would send this data to your backend
@@ -27,7 +29,7 @@ const ContactSection: React.FC = () => {
       name: '',
       email: '',
       company: '',
-      message: '',
+      message: ''
     });
 
     // Reset the submitted state after 5 seconds
@@ -35,9 +37,7 @@ const ContactSection: React.FC = () => {
       setSubmitted(false);
     }, 5000);
   };
-
-  return (
-    <section id="contact" className="py-20 px-6 bg-white">
+  return <section id="contact" className="py-20 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="order-2 lg:order-1">
@@ -50,8 +50,7 @@ const ContactSection: React.FC = () => {
               Our team will contact you to set up a personalized demo.
             </p>
 
-            {submitted ? (
-              <div className="glass-panel p-6 flex items-center space-x-4 animate-fade-in">
+            {submitted ? <div className="glass-panel p-6 flex items-center space-x-4 animate-fade-in">
                 <CheckCircle className="h-8 w-8 text-wastewise-green" />
                 <div>
                   <h3 className="text-xl font-bold mb-1">Thank you!</h3>
@@ -59,75 +58,37 @@ const ContactSection: React.FC = () => {
                     We've received your request and will be in touch shortly.
                   </p>
                 </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              </div> : <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-wastewise-dark-gray mb-1">
                       Full Name
                     </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formState.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all"
-                      placeholder="Your name"
-                    />
+                    <input type="text" id="name" name="name" value={formState.name} onChange={handleChange} required className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all" placeholder="Your name" />
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-wastewise-dark-gray mb-1">
                       Email Address
                     </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formState.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all"
-                      placeholder="you@company.com"
-                    />
+                    <input type="email" id="email" name="email" value={formState.email} onChange={handleChange} required className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all" placeholder="you@company.com" />
                   </div>
                 </div>
                 <div>
                   <label htmlFor="company" className="block text-sm font-medium text-wastewise-dark-gray mb-1">
                     Company Name
                   </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formState.company}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all"
-                    placeholder="Your company"
-                  />
+                  <input type="text" id="company" name="company" value={formState.company} onChange={handleChange} required className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all" placeholder="Your company" />
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-wastewise-dark-gray mb-1">
                     Message (Optional)
                   </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formState.message}
-                    onChange={handleChange}
-                    rows={4}
-                    className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all"
-                    placeholder="Tell us about your business and needs..."
-                  ></textarea>
+                  <textarea id="message" name="message" value={formState.message} onChange={handleChange} rows={4} className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all" placeholder="Tell us about your business and needs..."></textarea>
                 </div>
                 <button type="submit" className="btn-primary flex items-center justify-center gap-2">
                   Request Early Access <SendIcon size={18} />
                 </button>
-              </form>
-            )}
+              </form>}
           </div>
 
           <div className="order-1 lg:order-2 glass-panel p-8 animate-fade-in">
@@ -139,7 +100,7 @@ const ContactSection: React.FC = () => {
                     <CheckCircle className="h-5 w-5 text-wastewise-green" />
                   </div>
                   <div>
-                    <span className="font-medium block">Priority Onboarding</span>
+                    <span className="font-medium block text-left">Priority Onboarding</span>
                     <span className="text-sm text-wastewise-gray">
                       Get personalized setup and training from our team
                     </span>
@@ -150,7 +111,7 @@ const ContactSection: React.FC = () => {
                     <CheckCircle className="h-5 w-5 text-wastewise-green" />
                   </div>
                   <div>
-                    <span className="font-medium block">Founder's Pricing</span>
+                    <span className="font-medium block text-left">Founder's Pricing</span>
                     <span className="text-sm text-wastewise-gray">
                       Lock in our best rates for life
                     </span>
@@ -161,7 +122,7 @@ const ContactSection: React.FC = () => {
                     <CheckCircle className="h-5 w-5 text-wastewise-green" />
                   </div>
                   <div>
-                    <span className="font-medium block">Feature Input</span>
+                    <span className="font-medium block text-left">Feature Input</span>
                     <span className="text-sm text-wastewise-gray">
                       Help shape our roadmap with your feedback
                     </span>
@@ -187,8 +148,6 @@ const ContactSection: React.FC = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default ContactSection;
