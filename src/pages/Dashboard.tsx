@@ -127,7 +127,7 @@ const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
       <DashboardSidebar 
         onProfileClick={() => {
           setShowProfile(true);
-          setActiveView('profile' as ViewType);
+          setActiveView('profile');
         }}
         activeView={activeView}
         setActiveView={(view: ViewType) => {
@@ -142,7 +142,7 @@ const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
           showProfileButton={!showProfile}
           onProfileClick={() => {
             setShowProfile(true);
-            setActiveView('profile' as ViewType);
+            setActiveView('profile');
           }}
         />
         
