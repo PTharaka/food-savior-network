@@ -1,11 +1,8 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   LineChart,
@@ -18,71 +15,119 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
+  AreaChart,
+  Area
 } from 'recharts';
 
-// Demo data
+// Sample data for interactive demo
 const monthlyData = [
-  { name: 'Jan', waste: 200, reduced: 150, donated: 50 },
-  { name: 'Feb', waste: 190, reduced: 155, donated: 55 },
-  { name: 'Mar', waste: 180, reduced: 160, donated: 60 },
-  { name: 'Apr', waste: 170, reduced: 165, donated: 65 },
-  { name: 'May', waste: 160, reduced: 170, donated: 70 },
-  { name: 'Jun', waste: 150, reduced: 175, donated: 75 },
+  { name: 'Jan', waste: 120, saved: 30, donated: 25 },
+  { name: 'Feb', waste: 115, saved: 35, donated: 30 },
+  { name: 'Mar', waste: 110, saved: 40, donated: 40 },
+  { name: 'Apr', waste: 105, saved: 45, donated: 45 },
+  { name: 'May', waste: 100, saved: 50, donated: 50 },
+  { name: 'Jun', waste: 95, saved: 55, donated: 60 },
 ];
 
-const reductionData = [
-  { name: 'Food Waste', value: 40 },
-  { name: 'Composted', value: 30 },
-  { name: 'Donated', value: 20 },
-  { name: 'Recycled', value: 10 },
+const wasteTypeData = [
+  { name: 'Produce', value: 40 },
+  { name: 'Bakery', value: 25 },
+  { name: 'Dairy', value: 15 },
+  { name: 'Meat', value: 10 },
+  { name: 'Prepared', value: 10 },
 ];
 
-const COLORS = ['#ef4444', '#10b981', '#3b82f6', '#f59e0b'];
+const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 const impactData = [
-  { name: 'Meals', value: 1500 },
-  { name: 'CO₂ (kg)', value: 850 },
-  { name: 'Water (L)', value: 3200 },
+  { name: 'Jan', meals: 100, carbon: 0.5, trees: 2 },
+  { name: 'Feb', meals: 120, carbon: 0.6, trees: 3 },
+  { name: 'Mar', meals: 160, carbon: 0.8, trees: 4 },
+  { name: 'Apr', meals: 180, carbon: 0.9, trees: 5 },
+  { name: 'May', meals: 200, carbon: 1.0, trees: 6 },
+  { name: 'Jun', meals: 240, carbon: 1.2, trees: 7 },
 ];
 
+const MetricCard = ({ title, value, change, icon }: { title: string; value: string; change: string; icon: string }) => (
+  <div className="bg-wastewise-light-beige p-4 rounded-lg border border-wastewise-light-gray/20">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-sm text-wastewise-gray">{title}</p>
+        <p className="text-2xl font-bold text-wastewise-dark-green mt-1">{value}</p>
+      </div>
+      <div className="bg-wastewise-green/10 h-10 w-10 rounded-full flex items-center justify-center">
+        <span className="text-wastewise-green text-xl">{icon}</span>
+      </div>
+    </div>
+    <p className="text-xs text-wastewise-green mt-2">{change}</p>
+  </div>
+);
+
 const InteractiveAnalyticsDemo: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('waste');
+  const [activeTab, setActiveTab] = useState('overview');
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-wastewise-light-gray/30">
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex flex-col md:flex-row justify-between md:items-center mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-wastewise-dark-green">WasteWise Analytics</h3>
+            <p className="text-wastewise-gray text-sm">Monthly Impact Report</p>
+          </div>
+          <div className="mt-2 md:mt-0">
+            <span className="text-sm text-wastewise-gray">June 2024</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <MetricCard 
+            title="Cost Savings" 
+            value="$3,240" 
+            change="↑ 28% vs last month" 
+            icon="💰" 
+          />
+          <MetricCard 
+            title="Waste Reduction" 
+            value="612 kg" 
+            change="↑ 14% vs last month" 
+            icon="♻️" 
+          />
+          <MetricCard 
+            title="Meals Donated" 
+            value="1,450" 
+            change="↑ 35% vs last month" 
+            icon="🍲" 
+          />
+          <MetricCard 
+            title="CO² Avoided" 
+            value="1.2 tons" 
+            change="↑ 22% vs last month" 
+            icon="🌿" 
+          />
+        </div>
+      </div>
+
+      <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
+        <div className="px-6 border-b border-gray-200">
+          <TabsList className="h-12">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-wastewise-light-green/20 data-[state=active]:text-wastewise-dark-green">Overview</TabsTrigger>
+            <TabsTrigger value="waste" className="data-[state=active]:bg-wastewise-light-green/20 data-[state=active]:text-wastewise-dark-green">Waste Types</TabsTrigger>
+            <TabsTrigger value="impact" className="data-[state=active]:bg-wastewise-light-green/20 data-[state=active]:text-wastewise-dark-green">Impact</TabsTrigger>
+          </TabsList>
+        </div>
+
         <div className="p-6">
-          <h3 className="text-2xl font-bold text-wastewise-dark-green mb-2">
-            Interactive Analytics Dashboard
-          </h3>
-          <p className="text-wastewise-gray mb-6">
-            Visualize your waste reduction impact with our interactive dashboard
-          </p>
-          
-          <Tabs 
-            defaultValue="waste" 
-            className="w-full"
-            onValueChange={setActiveTab}
-          >
-            <TabsList className="grid w-full grid-cols-3 mb-8">
-              <TabsTrigger value="waste">Waste Tracking</TabsTrigger>
-              <TabsTrigger value="distribution">Distribution</TabsTrigger>
-              <TabsTrigger value="impact">Community Impact</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="waste" className="h-[350px]">
+          <TabsContent value="overview" className="mt-0">
+            <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={monthlyData}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
-                >
+                <AreaChart data={monthlyData}>
                   <defs>
                     <linearGradient id="colorWaste" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
                       <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
                     </linearGradient>
-                    <linearGradient id="colorReduced" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="colorSaved" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
                     </linearGradient>
@@ -91,156 +136,62 @@ const InteractiveAnalyticsDemo: React.FC = () => {
                       <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'white', 
-                      borderRadius: '8px', 
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }}
-                    formatter={(value) => [`${value} kg`, '']}
-                  />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="waste" 
-                    name="Total Waste" 
-                    stroke="#ef4444" 
-                    fillOpacity={1} 
-                    fill="url(#colorWaste)"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="reduced" 
-                    name="Waste Reduced" 
-                    stroke="#10b981" 
-                    fillOpacity={1} 
-                    fill="url(#colorReduced)"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="donated" 
-                    name="Food Donated" 
-                    stroke="#3b82f6" 
-                    fillOpacity={1} 
-                    fill="url(#colorDonated)"
-                  />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                  <YAxis axisLine={false} tickLine={false} />
+                  <Tooltip />
+                  <Legend verticalAlign="top" height={36} />
+                  <Area type="monotone" dataKey="waste" name="Food Waste (kg)" stroke="#ef4444" fillOpacity={1} fill="url(#colorWaste)" />
+                  <Area type="monotone" dataKey="saved" name="Waste Saved (kg)" stroke="#10b981" fillOpacity={1} fill="url(#colorSaved)" />
+                  <Area type="monotone" dataKey="donated" name="Food Donated (kg)" stroke="#3b82f6" fillOpacity={1} fill="url(#colorDonated)" />
                 </AreaChart>
               </ResponsiveContainer>
-            </TabsContent>
-            
-            <TabsContent value="distribution" className="h-[350px]">
-              <div className="grid grid-cols-2 h-full">
-                <div>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={reductionData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        fill="#8884d8"
-                        paddingAngle={2}
-                        dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        labelLine={false}
-                      >
-                        {reductionData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        formatter={(value) => [`${value}%`, 'Percentage']}
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex flex-col justify-center space-y-4 pl-6">
-                  {reductionData.map((item, index) => (
-                    <div key={index} className="flex items-center">
-                      <div 
-                        className="h-4 w-4 rounded-full mr-3" 
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                      ></div>
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-wastewise-gray">{item.value}% of total</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="impact" className="h-[350px]">
+            </div>
+          </TabsContent>
+
+          <TabsContent value="waste" className="mt-0">
+            <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={impactData}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
-                  layout="vertical"
-                >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                  <XAxis type="number" />
-                  <YAxis 
-                    dataKey="name" 
-                    type="category" 
-                    tick={{ fontSize: 12 }}
-                    width={80}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'white',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }}
-                  />
-                  <Bar 
-                    dataKey="value" 
-                    fill="#10b981" 
-                    radius={[0, 4, 4, 0]}
-                    barSize={30}
+                <PieChart>
+                  <Pie
+                    data={wasteTypeData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={120}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   >
-                    {impactData.map((entry, index) => (
+                    {wasteTypeData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
-                  </Bar>
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="impact" className="mt-0">
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={impactData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                  <YAxis axisLine={false} tickLine={false} />
+                  <Tooltip />
+                  <Legend verticalAlign="top" height={36} />
+                  <Bar dataKey="meals" name="Meals Provided" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="carbon" name="Carbon Saved (tons)" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="trees" name="Trees Equivalent" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </TabsContent>
         </div>
-        
-        <div className="bg-wastewise-light-beige p-6 border-t border-wastewise-light-gray/30">
-          <div className="grid grid-cols-3 gap-6">
-            <div>
-              <p className="text-sm text-wastewise-gray mb-1">Total Food Waste Reduced</p>
-              <p className="text-2xl font-bold text-wastewise-dark-green">975 kg</p>
-            </div>
-            <div>
-              <p className="text-sm text-wastewise-gray mb-1">Food Items Donated</p>
-              <p className="text-2xl font-bold text-wastewise-dark-green">375 kg</p>
-            </div>
-            <div>
-              <p className="text-sm text-wastewise-gray mb-1">CO₂ Emissions Avoided</p>
-              <p className="text-2xl font-bold text-wastewise-dark-green">850 kg</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="text-center mt-8">
-        <Button className="bg-wastewise-dark-green hover:bg-wastewise-green text-white">
-          Try WasteWise Analytics Today
-        </Button>
-      </div>
+      </Tabs>
     </div>
   );
 };

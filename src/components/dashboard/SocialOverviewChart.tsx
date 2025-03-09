@@ -13,7 +13,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Area
+  Area,
+  TooltipProps
 } from 'recharts';
 
 // Enhanced waste reduction metrics data
@@ -33,7 +34,7 @@ const wasteReductionData = [
 ];
 
 // Custom tooltip to display values in a more readable format
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-4 border border-gray-200 shadow-sm rounded-lg">

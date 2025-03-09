@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,16 +16,16 @@ import {
   BadgeDollarSign,
   ClipboardCheck,
   Sparkles,
-  History
+  History,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ViewType } from '@/pages/Dashboard';
 
-type ViewType = 'overview' | 'waste-tracking' | 'donations' | 'tax-reports' | 
-  'analytics' | 'predictions' | 'leaderboard' | 'community-impact' | 
-  'history' | 'subscription' | 'profile';
-
-interface NavItemProps {
+type NavItemProps = {
   icon: React.ReactNode;
   label: string;
   view: ViewType;
@@ -33,7 +34,8 @@ interface NavItemProps {
   disabled?: boolean;
   requiredTier?: string;
   onClick?: () => void;
-}
+  isCollapsed?: boolean;
+};
 
 const NavItem = ({ 
   icon, 
@@ -43,7 +45,8 @@ const NavItem = ({
   active, 
   disabled, 
   requiredTier, 
-  onClick 
+  onClick,
+  isCollapsed = false
 }: NavItemProps) => {
   const { subscription } = useSubscription();
   const tierLevels = { 'free': 0, 'starter': 1, 'pro': 2, 'enterprise': 3 };
@@ -67,12 +70,14 @@ const NavItem = ({
         active
           ? "bg-wastewise-light-green/20 text-wastewise-dark-green font-medium"
           : "text-wastewise-gray hover:bg-wastewise-light-green/10 hover:text-wastewise-dark-green",
-        (disabled || isLocked) && "opacity-50 cursor-not-allowed"
+        (disabled || isLocked) && "opacity-50 cursor-not-allowed",
+        isCollapsed && "justify-center px-2"
       )}
+      title={isCollapsed ? label : undefined}
     >
       {icon}
-      <span>{label}</span>
-      {isLocked && (
+      {!isCollapsed && <span>{label}</span>}
+      {!isCollapsed && isLocked && (
         <Badge variant="outline" className="ml-auto bg-wastewise-light-gray/20 text-wastewise-gray">
           {requiredTier}+
         </Badge>
@@ -86,13 +91,17 @@ interface DashboardSidebarProps {
   onProfileClick: () => void;
   activeView: ViewType;
   setActiveView: (view: ViewType) => void;
+  isCollapsed?: boolean;
+  toggleSidebar?: () => void;
 }
 
 export const DashboardSidebar = ({ 
   className, 
   onProfileClick, 
   activeView, 
-  setActiveView 
+  setActiveView,
+  isCollapsed = false,
+  toggleSidebar
 }: DashboardSidebarProps) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -102,18 +111,33 @@ export const DashboardSidebar = ({
     navigate(href);
   };
 
+  const SectionTitle = ({ children }: { children: React.ReactNode }) => {
+    if (isCollapsed) return null;
+    
+    return (
+      <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
+        {children}
+      </div>
+    );
+  };
+
   return (
-    <div className={cn("h-screen flex flex-col border-r border-wastewise-light-gray/20 bg-white fixed w-64", className)}>
-      <div className="p-4 border-b border-wastewise-light-gray/20">
-        <div className="flex items-center gap-2">
-          <span className="text-wastewise-green text-xl font-bold">WasteWise</span>
-          <button className="ml-auto text-wastewise-gray">
-            <span className="sr-only">Toggle sidebar</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m15 18-6-6 6-6"></path>
-            </svg>
-          </button>
-        </div>
+    <div className={cn(
+      "h-screen flex flex-col border-r border-wastewise-light-gray/20 bg-white fixed transition-all duration-300",
+      isCollapsed ? "w-20" : "w-64",
+      className
+    )}>
+      <div className="p-4 border-b border-wastewise-light-gray/20 flex items-center justify-between">
+        {!isCollapsed && <span className="text-wastewise-green text-xl font-bold">WasteWise</span>}
+        {isCollapsed && <span className="text-wastewise-green text-xl font-bold mx-auto">W</span>}
+        <Button
+          variant="ghost" 
+          size="icon" 
+          className="text-wastewise-gray hover:text-wastewise-dark-gray hover:bg-wastewise-light-green/10"
+          onClick={toggleSidebar}
+        >
+          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </Button>
       </div>
 
       <div className="flex-1 overflow-auto py-2 px-4">
@@ -125,11 +149,10 @@ export const DashboardSidebar = ({
             label="Dashboard" 
             active={activeView === 'overview'} 
             onClick={() => handleNavigation('overview', '/dashboard')}
+            isCollapsed={isCollapsed}
           />
           
-          <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
-            Waste Management
-          </div>
+          <SectionTitle>Waste Management</SectionTitle>
           
           <NavItem 
             href="/dashboard/waste-tracking" 
@@ -138,6 +161,7 @@ export const DashboardSidebar = ({
             label="Waste Tracking" 
             active={activeView === 'waste-tracking'} 
             onClick={() => handleNavigation('waste-tracking', '/dashboard/waste-tracking')}
+            isCollapsed={isCollapsed}
           />
           <NavItem 
             href="/dashboard/donations" 
@@ -146,6 +170,7 @@ export const DashboardSidebar = ({
             label="Donation Management" 
             active={activeView === 'donations'} 
             onClick={() => handleNavigation('donations', '/dashboard/donations')}
+            isCollapsed={isCollapsed}
           />
           <NavItem 
             href="/dashboard/tax-reports" 
@@ -154,6 +179,7 @@ export const DashboardSidebar = ({
             label="Tax Compliance" 
             active={activeView === 'tax-reports'} 
             onClick={() => handleNavigation('tax-reports', '/dashboard/tax-reports')}
+            isCollapsed={isCollapsed}
           />
           <NavItem 
             href="/dashboard/analytics" 
@@ -162,11 +188,10 @@ export const DashboardSidebar = ({
             label="Analytics" 
             active={activeView === 'analytics'} 
             onClick={() => handleNavigation('analytics', '/dashboard/analytics')}
+            isCollapsed={isCollapsed}
           />
           
-          <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
-            Advanced Features
-          </div>
+          <SectionTitle>Advanced Features</SectionTitle>
           
           <NavItem 
             href="/dashboard/predictions" 
@@ -176,6 +201,7 @@ export const DashboardSidebar = ({
             active={activeView === 'predictions'} 
             requiredTier="pro"
             onClick={() => handleNavigation('predictions', '/dashboard/predictions')}
+            isCollapsed={isCollapsed}
           />
           <NavItem 
             href="/dashboard/leaderboard" 
@@ -185,6 +211,7 @@ export const DashboardSidebar = ({
             active={activeView === 'leaderboard'} 
             requiredTier="starter"
             onClick={() => handleNavigation('leaderboard', '/dashboard/leaderboard')}
+            isCollapsed={isCollapsed}
           />
           <NavItem 
             href="/dashboard/community-impact" 
@@ -193,6 +220,7 @@ export const DashboardSidebar = ({
             label="Community Impact" 
             active={activeView === 'community-impact'} 
             onClick={() => handleNavigation('community-impact', '/dashboard/community-impact')}
+            isCollapsed={isCollapsed}
           />
           <NavItem 
             href="/dashboard/history" 
@@ -201,11 +229,10 @@ export const DashboardSidebar = ({
             label="Activity History" 
             active={activeView === 'history'} 
             onClick={() => handleNavigation('history', '/dashboard/history')}
+            isCollapsed={isCollapsed}
           />
           
-          <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
-            Account
-          </div>
+          <SectionTitle>Account</SectionTitle>
           
           <NavItem 
             href="#" 
@@ -214,6 +241,7 @@ export const DashboardSidebar = ({
             label="Settings" 
             active={activeView === 'profile'}
             onClick={onProfileClick}
+            isCollapsed={isCollapsed}
           />
           <NavItem 
             href="/dashboard/subscription" 
@@ -222,34 +250,47 @@ export const DashboardSidebar = ({
             label="Subscription" 
             active={activeView === 'subscription'} 
             onClick={() => handleNavigation('subscription', '/dashboard/subscription')}
+            isCollapsed={isCollapsed}
           />
         </nav>
       </div>
 
       <div className="mt-auto p-4 border-t border-wastewise-light-gray/20 flex items-center">
-        <div 
-          className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer" 
-          onClick={onProfileClick}
-        >
-          {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
-        </div>
-        <div 
-          className="flex flex-col ml-3 cursor-pointer" 
-          onClick={onProfileClick}
-        >
-          <span className="font-medium text-wastewise-dark-gray text-sm">
-            {user?.businessName || user?.email?.split('@')[0] || 'User'}
-          </span>
-          <span className="text-xs text-wastewise-gray truncate max-w-[140px]">
-            {user?.email}
-          </span>
-        </div>
-        <button 
-          className="ml-auto text-wastewise-gray hover:text-wastewise-dark-gray"
-          onClick={logout}
-        >
-          <LogOut className="h-4 w-4" />
-        </button>
+        {isCollapsed ? (
+          <div 
+            className="mx-auto bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer" 
+            onClick={onProfileClick}
+            title={user?.businessName || user?.email || 'User Profile'}
+          >
+            {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
+          </div>
+        ) : (
+          <>
+            <div 
+              className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer" 
+              onClick={onProfileClick}
+            >
+              {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
+            </div>
+            <div 
+              className="flex flex-col ml-3 cursor-pointer" 
+              onClick={onProfileClick}
+            >
+              <span className="font-medium text-wastewise-dark-gray text-sm">
+                {user?.businessName || user?.email?.split('@')[0] || 'User'}
+              </span>
+              <span className="text-xs text-wastewise-gray truncate max-w-[140px]">
+                {user?.email}
+              </span>
+            </div>
+            <button 
+              className="ml-auto text-wastewise-gray hover:text-wastewise-dark-gray"
+              onClick={logout}
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

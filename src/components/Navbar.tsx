@@ -57,7 +57,7 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          {isAuthenticated ? (
+          {isAuthenticated && !isLandingPage ? (
             <>
               <Link to="/dashboard" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
                 Dashboard
@@ -122,7 +122,7 @@ const Navbar = () => {
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       )}>
         <nav className="flex flex-col space-y-6">
-          {isAuthenticated ? (
+          {isAuthenticated && !isLandingPage ? (
             <>
               <Link
                 to="/dashboard" 
