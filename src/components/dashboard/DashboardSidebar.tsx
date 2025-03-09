@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import {
@@ -16,7 +16,6 @@ import {
   BadgeDollarSign,
   ClipboardCheck,
   Sparkles,
-  UserRound,
   History
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -25,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
+  view: string;
   href: string;
   active?: boolean;
   disabled?: boolean;
@@ -32,7 +32,16 @@ interface NavItemProps {
   onClick?: () => void;
 }
 
-const NavItem = ({ icon, label, href, active, disabled, requiredTier, onClick }: NavItemProps) => {
+const NavItem = ({ 
+  icon, 
+  label, 
+  view, 
+  href, 
+  active, 
+  disabled, 
+  requiredTier, 
+  onClick 
+}: NavItemProps) => {
   const { subscription } = useSubscription();
   const tierLevels = { 'free': 0, 'starter': 1, 'pro': 2, 'enterprise': 3 };
   const isLocked = requiredTier && 
@@ -71,14 +80,24 @@ const NavItem = ({ icon, label, href, active, disabled, requiredTier, onClick }:
 
 interface DashboardSidebarProps {
   className?: string;
-  onProfileClick?: () => void;
+  onProfileClick: () => void;
+  activeView: string;
+  setActiveView: (view: string) => void;
 }
 
-export const DashboardSidebar = ({ className, onProfileClick }: DashboardSidebarProps) => {
-  const location = useLocation();
+export const DashboardSidebar = ({ 
+  className, 
+  onProfileClick, 
+  activeView, 
+  setActiveView 
+}: DashboardSidebarProps) => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { subscription } = useSubscription();
-  const path = location.pathname;
+  
+  const handleNavigation = (view: string, href: string) => {
+    setActiveView(view);
+    navigate(href);
+  };
 
   return (
     <div className={cn("h-screen flex flex-col border-r border-wastewise-light-gray/20 bg-white fixed w-64", className)}>
@@ -98,9 +117,11 @@ export const DashboardSidebar = ({ className, onProfileClick }: DashboardSidebar
         <nav className="grid gap-1 pt-2">
           <NavItem 
             href="/dashboard" 
+            view="overview"
             icon={<LayoutDashboard className="h-4 w-4" />} 
             label="Dashboard" 
-            active={path === '/dashboard'} 
+            active={activeView === 'overview'} 
+            onClick={() => handleNavigation('overview', '/dashboard')}
           />
           
           <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
@@ -109,27 +130,35 @@ export const DashboardSidebar = ({ className, onProfileClick }: DashboardSidebar
           
           <NavItem 
             href="/dashboard/waste-tracking" 
+            view="waste-tracking"
             icon={<Recycle className="h-4 w-4" />} 
             label="Waste Tracking" 
-            active={path.includes('/waste-tracking')} 
+            active={activeView === 'waste-tracking'} 
+            onClick={() => handleNavigation('waste-tracking', '/dashboard/waste-tracking')}
           />
           <NavItem 
             href="/dashboard/donations" 
+            view="donations"
             icon={<Package className="h-4 w-4" />} 
             label="Donation Management" 
-            active={path.includes('/donations')} 
+            active={activeView === 'donations'} 
+            onClick={() => handleNavigation('donations', '/dashboard/donations')}
           />
           <NavItem 
             href="/dashboard/tax-reports" 
+            view="tax-reports"
             icon={<ClipboardCheck className="h-4 w-4" />} 
             label="Tax Compliance" 
-            active={path.includes('/tax-reports')} 
+            active={activeView === 'tax-reports'} 
+            onClick={() => handleNavigation('tax-reports', '/dashboard/tax-reports')}
           />
           <NavItem 
             href="/dashboard/analytics" 
+            view="analytics"
             icon={<BarChart3 className="h-4 w-4" />} 
             label="Analytics" 
-            active={path.includes('/analytics')} 
+            active={activeView === 'analytics'} 
+            onClick={() => handleNavigation('analytics', '/dashboard/analytics')}
           />
           
           <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
@@ -138,29 +167,37 @@ export const DashboardSidebar = ({ className, onProfileClick }: DashboardSidebar
           
           <NavItem 
             href="/dashboard/predictions" 
+            view="predictions"
             icon={<Sparkles className="h-4 w-4" />} 
             label="AI Predictions" 
-            active={path.includes('/predictions')} 
+            active={activeView === 'predictions'} 
             requiredTier="pro"
+            onClick={() => handleNavigation('predictions', '/dashboard/predictions')}
           />
           <NavItem 
             href="/dashboard/leaderboard" 
+            view="leaderboard"
             icon={<Users className="h-4 w-4" />} 
             label="Employee Leaderboard" 
-            active={path.includes('/leaderboard')} 
+            active={activeView === 'leaderboard'} 
             requiredTier="starter"
+            onClick={() => handleNavigation('leaderboard', '/dashboard/leaderboard')}
           />
           <NavItem 
             href="/dashboard/community-impact" 
+            view="community-impact"
             icon={<Globe className="h-4 w-4" />} 
             label="Community Impact" 
-            active={path.includes('/community-impact')} 
+            active={activeView === 'community-impact'} 
+            onClick={() => handleNavigation('community-impact', '/dashboard/community-impact')}
           />
           <NavItem 
             href="/dashboard/history" 
+            view="history"
             icon={<History className="h-4 w-4" />} 
             label="Activity History" 
-            active={path.includes('/history')} 
+            active={activeView === 'history'} 
+            onClick={() => handleNavigation('history', '/dashboard/history')}
           />
           
           <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
@@ -169,16 +206,19 @@ export const DashboardSidebar = ({ className, onProfileClick }: DashboardSidebar
           
           <NavItem 
             href="#" 
+            view="profile"
             icon={<Settings className="h-4 w-4" />} 
             label="Settings" 
-            active={path.includes('/settings')}
+            active={activeView === 'profile'}
             onClick={onProfileClick}
           />
           <NavItem 
             href="/dashboard/subscription" 
+            view="subscription"
             icon={<BadgeDollarSign className="h-4 w-4" />} 
             label="Subscription" 
-            active={path.includes('/subscription')} 
+            active={activeView === 'subscription'} 
+            onClick={() => handleNavigation('subscription', '/dashboard/subscription')}
           />
         </nav>
       </div>

@@ -36,9 +36,49 @@ const App = () => (
                   <Dashboard />
                 </ProtectedRoute>
               } />
-              <Route path="/dashboard/settings" element={
+              <Route path="/dashboard/waste-tracking" element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <Dashboard initialView="waste-tracking" />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/donations" element={
+                <ProtectedRoute>
+                  <Dashboard initialView="donations" />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/tax-reports" element={
+                <ProtectedRoute>
+                  <Dashboard initialView="tax-reports" />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/analytics" element={
+                <ProtectedRoute>
+                  <Dashboard initialView="analytics" />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/predictions" element={
+                <ProtectedRoute>
+                  <Dashboard initialView="predictions" />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/leaderboard" element={
+                <ProtectedRoute>
+                  <Dashboard initialView="leaderboard" />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/community-impact" element={
+                <ProtectedRoute>
+                  <Dashboard initialView="community-impact" />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/history" element={
+                <ProtectedRoute>
+                  <Dashboard initialView="history" />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/subscription" element={
+                <ProtectedRoute>
+                  <Dashboard initialView="subscription" />
                 </ProtectedRoute>
               } />
               
