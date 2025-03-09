@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -18,12 +18,15 @@ import {
   Sparkles,
   History,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Bell
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ViewType } from '@/pages/Dashboard';
+import NotificationPanel from './NotificationPanel';
+import UserProfileMenu from './UserProfileMenu';
 
 type NavItemProps = {
   icon: React.ReactNode;
@@ -71,12 +74,12 @@ const NavItem = ({
           ? "bg-wastewise-light-green/20 text-wastewise-dark-green font-medium"
           : "text-wastewise-gray hover:bg-wastewise-light-green/10 hover:text-wastewise-dark-green",
         (disabled || isLocked) && "opacity-50 cursor-not-allowed",
-        isCollapsed && "justify-center px-2"
+        isCollapsed && "justify-center px-2 py-3"
       )}
       title={isCollapsed ? label : undefined}
     >
-      {icon}
-      {!isCollapsed && <span>{label}</span>}
+      <span className="flex-shrink-0">{icon}</span>
+      {!isCollapsed && <span className="truncate">{label}</span>}
       {!isCollapsed && isLocked && (
         <Badge variant="outline" className="ml-auto bg-wastewise-light-gray/20 text-wastewise-gray">
           {requiredTier}+
@@ -105,6 +108,8 @@ export const DashboardSidebar = ({
 }: DashboardSidebarProps) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   
   const handleNavigation = (view: ViewType, href: string) => {
     setActiveView(view);
@@ -124,7 +129,7 @@ export const DashboardSidebar = ({
   return (
     <div className={cn(
       "h-screen flex flex-col border-r border-wastewise-light-gray/20 bg-white fixed transition-all duration-300",
-      isCollapsed ? "w-20" : "w-64",
+      isCollapsed ? "w-16" : "w-64",
       className
     )}>
       <div className="p-4 border-b border-wastewise-light-gray/20 flex items-center justify-between">
@@ -140,7 +145,29 @@ export const DashboardSidebar = ({
         </Button>
       </div>
 
-      <div className="flex-1 overflow-auto py-2 px-4">
+      <div className="relative flex items-center justify-between p-2 border-b border-wastewise-light-gray/20">
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "text-wastewise-gray hover:text-wastewise-dark-gray hover:bg-wastewise-light-green/10",
+            isCollapsed && "mx-auto"
+          )}
+          onClick={() => setNotificationsOpen(!notificationsOpen)}
+        >
+          <Bell className="h-5 w-5" />
+          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </Button>
+        {!isCollapsed && 
+          <span className="text-sm text-wastewise-gray">3 new notifications</span>
+        }
+        <NotificationPanel 
+          isOpen={notificationsOpen} 
+          onClose={() => setNotificationsOpen(false)}
+        />
+      </div>
+
+      <div className="flex-1 overflow-auto py-2 px-2">
         <nav className="grid gap-1 pt-2">
           <NavItem 
             href="/dashboard" 
@@ -235,12 +262,12 @@ export const DashboardSidebar = ({
           <SectionTitle>Account</SectionTitle>
           
           <NavItem 
-            href="#" 
-            view="profile"
+            href="/dashboard/settings" 
+            view="settings"
             icon={<Settings className="h-4 w-4" />} 
             label="Settings" 
-            active={activeView === 'profile'}
-            onClick={onProfileClick}
+            active={activeView === 'settings'}
+            onClick={() => handleNavigation('settings', '/dashboard/settings')}
             isCollapsed={isCollapsed}
           />
           <NavItem 
@@ -255,42 +282,40 @@ export const DashboardSidebar = ({
         </nav>
       </div>
 
-      <div className="mt-auto p-4 border-t border-wastewise-light-gray/20 flex items-center">
-        {isCollapsed ? (
-          <div 
-            className="mx-auto bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer" 
-            onClick={onProfileClick}
-            title={user?.businessName || user?.email || 'User Profile'}
-          >
-            {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
-          </div>
-        ) : (
-          <>
-            <div 
-              className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer" 
-              onClick={onProfileClick}
-            >
-              {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
-            </div>
-            <div 
-              className="flex flex-col ml-3 cursor-pointer" 
-              onClick={onProfileClick}
-            >
-              <span className="font-medium text-wastewise-dark-gray text-sm">
-                {user?.businessName || user?.email?.split('@')[0] || 'User'}
-              </span>
+      <div className="mt-auto p-3 border-t border-wastewise-light-gray/20 relative">
+        <div 
+          className={cn(
+            "bg-wastewise-green/20 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer",
+            isCollapsed ? "h-10 w-10 mx-auto" : "h-10 w-10"
+          )}
+          onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+        >
+          {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
+        </div>
+        
+        {!isCollapsed && (
+          <div className="flex flex-col mt-2">
+            <span className="font-medium text-wastewise-dark-gray text-sm">
+              {user?.businessName || user?.email?.split('@')[0] || 'User'}
+            </span>
+            <div className="flex items-center justify-between">
               <span className="text-xs text-wastewise-gray truncate max-w-[140px]">
                 {user?.email}
               </span>
+              <button 
+                className="text-wastewise-gray hover:text-wastewise-dark-gray"
+                onClick={logout}
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
             </div>
-            <button 
-              className="ml-auto text-wastewise-gray hover:text-wastewise-dark-gray"
-              onClick={logout}
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
-          </>
+          </div>
         )}
+        
+        <UserProfileMenu 
+          isOpen={profileMenuOpen && isCollapsed} 
+          onClose={() => setProfileMenuOpen(false)} 
+        />
       </div>
     </div>
   );

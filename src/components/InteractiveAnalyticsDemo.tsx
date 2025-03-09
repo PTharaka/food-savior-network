@@ -5,19 +5,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
-  AreaChart,
-  Area
 } from 'recharts';
 
 // Sample data for interactive demo
@@ -108,7 +101,7 @@ const InteractiveAnalyticsDemo: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
+      <Tabs defaultValue="overview" className="w-full">
         <div className="px-6 border-b border-gray-200">
           <TabsList className="h-12">
             <TabsTrigger value="overview" className="data-[state=active]:bg-wastewise-light-green/20 data-[state=active]:text-wastewise-dark-green">Overview</TabsTrigger>
@@ -121,30 +114,16 @@ const InteractiveAnalyticsDemo: React.FC = () => {
           <TabsContent value="overview" className="mt-0">
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={monthlyData}>
-                  <defs>
-                    <linearGradient id="colorWaste" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
-                    </linearGradient>
-                    <linearGradient id="colorSaved" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
-                    </linearGradient>
-                    <linearGradient id="colorDonated" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                    </linearGradient>
-                  </defs>
+                <BarChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} />
                   <Tooltip />
                   <Legend verticalAlign="top" height={36} />
-                  <Area type="monotone" dataKey="waste" name="Food Waste (kg)" stroke="#ef4444" fillOpacity={1} fill="url(#colorWaste)" />
-                  <Area type="monotone" dataKey="saved" name="Waste Saved (kg)" stroke="#10b981" fillOpacity={1} fill="url(#colorSaved)" />
-                  <Area type="monotone" dataKey="donated" name="Food Donated (kg)" stroke="#3b82f6" fillOpacity={1} fill="url(#colorDonated)" />
-                </AreaChart>
+                  <Bar dataKey="waste" name="Food Waste (kg)" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="saved" name="Waste Saved (kg)" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="donated" name="Food Donated (kg)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </TabsContent>
@@ -152,24 +131,14 @@ const InteractiveAnalyticsDemo: React.FC = () => {
           <TabsContent value="waste" className="mt-0">
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={wasteTypeData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={120}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {wasteTypeData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
+                <BarChart data={wasteTypeData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                  <XAxis type="number" />
+                  <YAxis type="category" dataKey="name" width={100} />
                   <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
                   <Legend />
-                </PieChart>
+                  <Bar dataKey="value" name="Percentage" fill="#10b981" radius={[0, 4, 4, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </TabsContent>

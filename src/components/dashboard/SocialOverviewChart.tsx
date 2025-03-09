@@ -4,8 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Calendar } from 'lucide-react';
 import {
-  ComposedChart,
-  Line,
+  BarChart,
   Bar,
   XAxis,
   YAxis,
@@ -13,7 +12,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Area,
   TooltipProps
 } from 'recharts';
 
@@ -72,15 +70,16 @@ const SocialOverviewChart: React.FC = () => {
             <span>Jan - Dec 2024</span>
             <ChevronDown className="h-3 w-3" />
           </Button>
-          <Button variant="outline" size="sm" className="text-xs h-8">
-            {timeRange} <ChevronDown className="ml-1 h-3 w-3" />
+          <Button variant="outline" size="sm" className="text-xs h-8 flex items-center gap-2">
+            <span>{timeRange}</span>
+            <ChevronDown className="h-3 w-3" />
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         <div className="w-full h-[350px]">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart
+            <BarChart
               data={wasteReductionData}
               margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
             >
@@ -106,13 +105,12 @@ const SocialOverviewChart: React.FC = () => {
                 iconType="circle"
                 iconSize={8}
               />
-              <Area 
-                type="monotone" 
+              <Bar 
                 dataKey="composted" 
                 name="Composted" 
-                fill="rgba(16, 185, 129, 0.2)" 
-                stroke="#10b981" 
-                strokeWidth={2} 
+                fill="#10b981" 
+                radius={[4, 4, 0, 0]} 
+                barSize={20}
               />
               <Bar 
                 dataKey="donated" 
@@ -121,25 +119,14 @@ const SocialOverviewChart: React.FC = () => {
                 radius={[4, 4, 0, 0]} 
                 barSize={20}
               />
-              <Line 
-                type="monotone" 
+              <Bar 
                 dataKey="foodWaste" 
                 name="Food Waste" 
-                stroke="#ef4444" 
-                strokeWidth={2} 
-                dot={{ stroke: '#ef4444', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: '#ef4444', strokeWidth: 2 }}
+                fill="#ef4444" 
+                radius={[4, 4, 0, 0]} 
+                barSize={20}
               />
-              <Line 
-                type="monotone" 
-                dataKey="goal" 
-                name="Waste Goal" 
-                stroke="#94a3b8" 
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                dot={false}
-              />
-            </ComposedChart>
+            </BarChart>
           </ResponsiveContainer>
         </div>
         

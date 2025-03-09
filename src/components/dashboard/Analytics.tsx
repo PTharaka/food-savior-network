@@ -7,19 +7,12 @@ import { Share2, Download, Calendar } from 'lucide-react';
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
-  AreaChart,
-  Area
 } from 'recharts';
 
 // Sample data for analytics
@@ -90,8 +83,6 @@ const wasteDistributionData = [
   { name: 'Meat', value: 10 },
   { name: 'Prepared Foods', value: 15 },
 ];
-
-const wasteDistributionColors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 const trendData = [
   { name: 'Week 1', current: 140, previous: 170 },
@@ -169,19 +160,13 @@ const AnalyticsPanel = () => {
             <div className="text-sm text-wastewise-green">↑ 8% vs. last period</div>
             <div className="w-full h-36 mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={wasteReductionData}>
-                  <defs>
-                    <linearGradient id="colorReduced" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                    </linearGradient>
-                  </defs>
+                <BarChart data={wasteReductionData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `${value} kg`} />
                   <Tooltip formatter={(value) => [`${value} kg`, 'Reduced']} />
-                  <Area type="monotone" dataKey="reduced" stroke="#3b82f6" fillOpacity={1} fill="url(#colorReduced)" />
-                </AreaChart>
+                  <Bar dataKey="reduced" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -199,13 +184,13 @@ const AnalyticsPanel = () => {
             <div className="text-sm text-wastewise-green">↑ 22% vs. last period</div>
             <div className="w-full h-36 mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={mealsDonatedData}>
+                <BarChart data={mealsDonatedData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} />
                   <Tooltip formatter={(value) => [`${value} meals`, 'Donated']} />
-                  <Line type="monotone" dataKey="meals" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                </LineChart>
+                  <Bar dataKey="meals" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -223,22 +208,13 @@ const AnalyticsPanel = () => {
             <div className="text-sm text-wastewise-green">↑ 12% vs. last period</div>
             <div className="w-full h-36 mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={wasteDistributionData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={60}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {wasteDistributionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={wasteDistributionColors[index % wasteDistributionColors.length]} />
-                    ))}
-                  </Pie>
+                <BarChart data={wasteDistributionData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                  <XAxis type="number" tickFormatter={(value) => `${value}%`} />
+                  <YAxis type="category" dataKey="name" width={100} />
                   <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
-                </PieChart>
+                  <Bar dataKey="value" name="Percentage" fill="#10b981" radius={[0, 4, 4, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -255,14 +231,16 @@ const Analytics: React.FC = () => {
         <h2 className="text-2xl font-bold text-wastewise-dark-gray">Analytics Dashboard</h2>
         <div className="flex gap-3">
           <Button variant="outline" className="flex items-center gap-2">
-            <Calendar size={16} />
+            <Calendar className="h-4 w-4" />
             <span>Jan 1 - Dec 31, 2024</span>
           </Button>
           <Button variant="outline" className="flex items-center gap-2">
-            <Share2 size={16} /> Share Report
+            <Share2 className="h-4 w-4" /> 
+            <span>Share Report</span>
           </Button>
           <Button variant="outline" className="flex items-center gap-2">
-            <Download size={16} /> Export Data
+            <Download className="h-4 w-4" /> 
+            <span>Export Data</span>
           </Button>
         </div>
       </div>
@@ -313,15 +291,15 @@ const Analytics: React.FC = () => {
             <CardContent>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trendData}>
+                  <BarChart data={trendData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis tickFormatter={(value) => `${value} kg`} />
                     <Tooltip formatter={(value) => [`${value} kg`, 'Waste']} />
                     <Legend />
-                    <Line type="monotone" dataKey="current" name="Current Period" stroke="#10b981" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                    <Line type="monotone" dataKey="previous" name="Previous Period" stroke="#94a3b8" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3 }} />
-                  </LineChart>
+                    <Bar dataKey="current" name="Current Period" fill="#10b981" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="previous" name="Previous Period" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
