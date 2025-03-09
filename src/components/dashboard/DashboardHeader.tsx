@@ -1,20 +1,17 @@
 
-import React from 'react';
-import { Bell, Search, UserRound } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import NotificationPanel from './NotificationPanel';
 
 interface DashboardHeaderProps {
   userName: string;
-  showProfileButton?: boolean;
-  onProfileClick?: () => void;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({ 
-  userName, 
-  showProfileButton = true,
-  onProfileClick 
-}) => {
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName }) => {
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
   return (
     <header className="bg-white border-b p-4">
       <div className="flex items-center justify-between">
@@ -33,23 +30,23 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             />
           </div>
           
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5 text-wastewise-gray" />
-            <span className="absolute -top-1 -right-1 h-4 w-4 bg-wastewise-green rounded-full flex items-center justify-center text-[10px] text-white font-bold">
-              3
-            </span>
-          </Button>
-          
-          {showProfileButton && (
+          <div className="relative">
             <Button 
               variant="ghost" 
-              className="flex items-center space-x-2"
-              onClick={onProfileClick}
+              size="icon" 
+              className="relative"
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
             >
-              <UserRound className="h-5 w-5 text-wastewise-gray" />
-              <span className="hidden md:inline">Profile</span>
+              <Bell className="h-5 w-5 text-wastewise-gray" />
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-wastewise-green rounded-full flex items-center justify-center text-[10px] text-white font-bold">
+                3
+              </span>
             </Button>
-          )}
+            <NotificationPanel 
+              isOpen={notificationsOpen} 
+              onClose={() => setNotificationsOpen(false)}
+            />
+          </div>
         </div>
       </div>
     </header>

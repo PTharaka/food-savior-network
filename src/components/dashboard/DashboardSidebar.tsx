@@ -18,14 +18,12 @@ import {
   Sparkles,
   History,
   ChevronLeft,
-  ChevronRight,
-  Bell
+  ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ViewType } from '@/pages/Dashboard';
-import NotificationPanel from './NotificationPanel';
 import UserProfileMenu from './UserProfileMenu';
 
 type NavItemProps = {
@@ -108,7 +106,6 @@ export const DashboardSidebar = ({
 }: DashboardSidebarProps) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   
   const handleNavigation = (view: ViewType, href: string) => {
@@ -143,28 +140,6 @@ export const DashboardSidebar = ({
         >
           {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
-      </div>
-
-      <div className="relative flex items-center justify-between p-2 border-b border-wastewise-light-gray/20">
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "text-wastewise-gray hover:text-wastewise-dark-gray hover:bg-wastewise-light-green/10",
-            isCollapsed && "mx-auto"
-          )}
-          onClick={() => setNotificationsOpen(!notificationsOpen)}
-        >
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-        </Button>
-        {!isCollapsed && 
-          <span className="text-sm text-wastewise-gray">3 new notifications</span>
-        }
-        <NotificationPanel 
-          isOpen={notificationsOpen} 
-          onClose={() => setNotificationsOpen(false)}
-        />
       </div>
 
       <div className="flex-1 overflow-auto py-2 px-2">
@@ -285,32 +260,38 @@ export const DashboardSidebar = ({
       <div className="mt-auto p-3 border-t border-wastewise-light-gray/20 relative">
         <div 
           className={cn(
-            "bg-wastewise-green/20 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green cursor-pointer",
-            isCollapsed ? "h-10 w-10 mx-auto" : "h-10 w-10"
+            "flex items-center space-x-2 cursor-pointer",
+            isCollapsed && "justify-center"
           )}
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
-          {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
-        </div>
-        
-        {!isCollapsed && (
-          <div className="flex flex-col mt-2">
-            <span className="font-medium text-wastewise-dark-gray text-sm">
-              {user?.businessName || user?.email?.split('@')[0] || 'User'}
-            </span>
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-wastewise-gray truncate max-w-[140px]">
-                {user?.email}
-              </span>
-              <button 
-                className="text-wastewise-gray hover:text-wastewise-dark-gray"
-                onClick={logout}
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </div>
+          <div className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green">
+            {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
           </div>
-        )}
+          
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium text-sm truncate">
+                {user?.businessName || user?.email?.split('@')[0] || 'User'}
+              </h3>
+              <p className="text-xs text-wastewise-gray truncate">{user?.email}</p>
+            </div>
+          )}
+
+          {!isCollapsed && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="text-wastewise-gray hover:text-wastewise-dark-green"
+              onClick={(e) => {
+                e.stopPropagation();
+                logout();
+              }}
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
         
         <UserProfileMenu 
           isOpen={profileMenuOpen && isCollapsed} 

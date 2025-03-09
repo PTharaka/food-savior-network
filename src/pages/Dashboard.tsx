@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import StatCards from '@/components/dashboard/StatCards';
@@ -19,7 +18,7 @@ import Analytics from '@/components/dashboard/Analytics';
 // Define all possible view types to ensure type safety
 export type ViewType = 'overview' | 'waste-tracking' | 'donations' | 'tax-reports' | 
   'analytics' | 'predictions' | 'leaderboard' | 'community-impact' | 
-  'history' | 'subscription' | 'profile';
+  'history' | 'settings' | 'subscription' | 'profile';
 
 interface DashboardProps {
   initialView?: ViewType;
@@ -28,7 +27,6 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [activeView, setActiveView] = useState<ViewType>(initialView);
   const [showProfile, setShowProfile] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -224,6 +222,56 @@ const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
             </div>
           </div>
         );
+      case 'settings':
+        return (
+          <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+            <h2 className="text-2xl font-bold mb-4">Settings</h2>
+            <p className="text-wastewise-gray mb-6">Manage your account settings and preferences.</p>
+            
+            <div className="bg-wastewise-light-beige p-6 rounded-lg border border-wastewise-light-gray/20 mb-6">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold">Account Information</h3>
+                  <p className="text-wastewise-gray mt-1">Update your business name, email, and contact information.</p>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg border border-wastewise-light-gray/20 text-center">
+                  <p className="text-wastewise-gray text-sm">Last Updated</p>
+                  <p className="text-wastewise-dark-green font-bold text-xl">Nov 10, 2023</p>
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border border-wastewise-light-gray/20 mb-4">
+                <h4 className="font-medium mb-2">Notification Preferences</h4>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <li className="flex items-center text-sm text-wastewise-dark-gray">
+                    <span className="bg-wastewise-green/20 text-wastewise-green p-1 rounded-full mr-2">✓</span>
+                    Email notifications
+                  </li>
+                  <li className="flex items-center text-sm text-wastewise-dark-gray">
+                    <span className="bg-wastewise-green/20 text-wastewise-green p-1 rounded-full mr-2">✓</span>
+                    SMS notifications
+                  </li>
+                  <li className="flex items-center text-sm text-wastewise-dark-gray">
+                    <span className="bg-wastewise-green/20 text-wastewise-green p-1 rounded-full mr-2">✓</span>
+                    Push notifications
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <span className="text-sm text-wastewise-dark-gray">Usage: 23/50 entries</span>
+                  <div className="w-32 h-2 bg-gray-200 rounded-full mx-2">
+                    <div className="h-2 bg-wastewise-green rounded-full" style={{width: '46%'}}></div>
+                  </div>
+                </div>
+                <button className="bg-wastewise-green text-white px-4 py-2 rounded-lg hover:bg-wastewise-dark-green transition-colors">
+                  Update Settings
+                </button>
+              </div>
+            </div>
+          </div>
+        );
       case 'subscription':
         return (
           <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
@@ -403,15 +451,8 @@ const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
         toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
       
-      <div className={`flex-1 ${sidebarCollapsed ? 'ml-20' : 'ml-64'} transition-all duration-300`}>
-        <DashboardHeader 
-          userName={userName} 
-          showProfileButton={!showProfile}
-          onProfileClick={() => {
-            setShowProfile(true);
-            setActiveView('profile');
-          }}
-        />
+      <div className={`flex-1 ${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-300`}>
+        <DashboardHeader userName={userName} />
         
         <main className="p-6">
           {renderContent()}

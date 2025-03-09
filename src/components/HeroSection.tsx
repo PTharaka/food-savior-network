@@ -1,6 +1,25 @@
 
 import React, { useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
+
+// Sample data for the hero analytics chart
+const analyticsData = [
+  { name: 'Jan', waste: 40, saved: 24 },
+  { name: 'Feb', waste: 38, saved: 26 },
+  { name: 'Mar', waste: 35, saved: 29 },
+  { name: 'Apr', waste: 32, saved: 32 },
+  { name: 'May', waste: 28, saved: 36 },
+  { name: 'Jun', waste: 25, saved: 40 },
+];
 
 const HeroSection: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -99,8 +118,30 @@ const HeroSection: React.FC = () => {
                   <div className="text-wastewise-green text-xs mt-1">↑ 22% vs last month</div>
                 </div>
               </div>
-              <div className="h-32 bg-wastewise-beige rounded-lg flex items-center justify-center">
-                <div className="text-wastewise-gray text-xs">Interactive Analytics Chart</div>
+              <div className="h-32 bg-wastewise-beige rounded-lg">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={analyticsData}
+                    margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="colorWaste" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                      </linearGradient>
+                      <linearGradient id="colorSaved" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 8 }} />
+                    <YAxis hide={true} />
+                    <Tooltip contentStyle={{ fontSize: 10 }} />
+                    <Area type="monotone" dataKey="waste" stroke="#ef4444" fillOpacity={1} fill="url(#colorWaste)" />
+                    <Area type="monotone" dataKey="saved" stroke="#10b981" fillOpacity={1} fill="url(#colorSaved)" />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>

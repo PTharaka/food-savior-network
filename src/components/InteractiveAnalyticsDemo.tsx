@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
+  Legend
 } from 'recharts';
 
 // Sample data for interactive demo
@@ -21,25 +21,6 @@ const monthlyData = [
   { name: 'Apr', waste: 105, saved: 45, donated: 45 },
   { name: 'May', waste: 100, saved: 50, donated: 50 },
   { name: 'Jun', waste: 95, saved: 55, donated: 60 },
-];
-
-const wasteTypeData = [
-  { name: 'Produce', value: 40 },
-  { name: 'Bakery', value: 25 },
-  { name: 'Dairy', value: 15 },
-  { name: 'Meat', value: 10 },
-  { name: 'Prepared', value: 10 },
-];
-
-const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
-
-const impactData = [
-  { name: 'Jan', meals: 100, carbon: 0.5, trees: 2 },
-  { name: 'Feb', meals: 120, carbon: 0.6, trees: 3 },
-  { name: 'Mar', meals: 160, carbon: 0.8, trees: 4 },
-  { name: 'Apr', meals: 180, carbon: 0.9, trees: 5 },
-  { name: 'May', meals: 200, carbon: 1.0, trees: 6 },
-  { name: 'Jun', meals: 240, carbon: 1.2, trees: 7 },
 ];
 
 const MetricCard = ({ title, value, change, icon }: { title: string; value: string; change: string; icon: string }) => (
@@ -58,8 +39,6 @@ const MetricCard = ({ title, value, change, icon }: { title: string; value: stri
 );
 
 const InteractiveAnalyticsDemo: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       <div className="p-6 border-b border-gray-200">
@@ -101,66 +80,60 @@ const InteractiveAnalyticsDemo: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <div className="px-6 border-b border-gray-200">
-          <TabsList className="h-12">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-wastewise-light-green/20 data-[state=active]:text-wastewise-dark-green">Overview</TabsTrigger>
-            <TabsTrigger value="waste" className="data-[state=active]:bg-wastewise-light-green/20 data-[state=active]:text-wastewise-dark-green">Waste Types</TabsTrigger>
-            <TabsTrigger value="impact" className="data-[state=active]:bg-wastewise-light-green/20 data-[state=active]:text-wastewise-dark-green">Impact</TabsTrigger>
-          </TabsList>
+      <div className="p-6">
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={monthlyData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="colorWaste" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                </linearGradient>
+                <linearGradient id="colorSaved" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                </linearGradient>
+                <linearGradient id="colorDonated" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} />
+              <YAxis axisLine={false} tickLine={false} />
+              <Tooltip />
+              <Legend verticalAlign="top" height={36} />
+              <Area 
+                type="monotone" 
+                dataKey="waste" 
+                name="Food Waste (kg)" 
+                stroke="#ef4444" 
+                fillOpacity={1} 
+                fill="url(#colorWaste)" 
+              />
+              <Area 
+                type="monotone" 
+                dataKey="saved" 
+                name="Waste Saved (kg)" 
+                stroke="#10b981" 
+                fillOpacity={1} 
+                fill="url(#colorSaved)" 
+              />
+              <Area 
+                type="monotone" 
+                dataKey="donated" 
+                name="Food Donated (kg)" 
+                stroke="#3b82f6" 
+                fillOpacity={1} 
+                fill="url(#colorDonated)" 
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
-
-        <div className="p-6">
-          <TabsContent value="overview" className="mt-0">
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                  <YAxis axisLine={false} tickLine={false} />
-                  <Tooltip />
-                  <Legend verticalAlign="top" height={36} />
-                  <Bar dataKey="waste" name="Food Waste (kg)" fill="#ef4444" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="saved" name="Waste Saved (kg)" fill="#10b981" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="donated" name="Food Donated (kg)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="waste" className="mt-0">
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={wasteTypeData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                  <XAxis type="number" />
-                  <YAxis type="category" dataKey="name" width={100} />
-                  <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
-                  <Legend />
-                  <Bar dataKey="value" name="Percentage" fill="#10b981" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="impact" className="mt-0">
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={impactData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                  <YAxis axisLine={false} tickLine={false} />
-                  <Tooltip />
-                  <Legend verticalAlign="top" height={36} />
-                  <Bar dataKey="meals" name="Meals Provided" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="carbon" name="Carbon Saved (tons)" fill="#10b981" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="trees" name="Trees Equivalent" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </TabsContent>
-        </div>
-      </Tabs>
+      </div>
     </div>
   );
 };
