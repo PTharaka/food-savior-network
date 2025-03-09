@@ -1,16 +1,26 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import UserProfile from '@/components/UserProfile';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
+// This component is not being used but we'll fix it anyway
 const ProfilePage = () => {
+  const navigate = useNavigate();
+  const [activeView, useState]('profile');
+  
   return (
     <div className="h-screen flex overflow-hidden bg-wastewise-cream/50">
       <div className="fixed md:relative h-full w-64 z-40 md:z-0 bg-white">
-        <DashboardSidebar />
+        <DashboardSidebar 
+          onProfileClick={() => {}}
+          activeView="profile"
+          setActiveView={(view) => {
+            navigate(`/dashboard/${view === 'overview' ? '' : view}`);
+          }}
+        />
       </div>
       
       <div className="flex-1 flex flex-col overflow-hidden ml-64">
@@ -28,7 +38,7 @@ const ProfilePage = () => {
 
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto">
-            <UserProfile />
+            <UserProfile onClose={() => navigate('/dashboard')} />
           </div>
         </main>
       </div>

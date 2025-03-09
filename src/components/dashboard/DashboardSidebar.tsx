@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,10 +20,14 @@ import {
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
+type ViewType = 'overview' | 'waste-tracking' | 'donations' | 'tax-reports' | 
+  'analytics' | 'predictions' | 'leaderboard' | 'community-impact' | 
+  'history' | 'subscription' | 'profile';
+
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
-  view: string;
+  view: ViewType;
   href: string;
   active?: boolean;
   disabled?: boolean;
@@ -81,8 +84,8 @@ const NavItem = ({
 interface DashboardSidebarProps {
   className?: string;
   onProfileClick: () => void;
-  activeView: string;
-  setActiveView: (view: string) => void;
+  activeView: ViewType;
+  setActiveView: (view: ViewType) => void;
 }
 
 export const DashboardSidebar = ({ 
@@ -94,7 +97,7 @@ export const DashboardSidebar = ({
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   
-  const handleNavigation = (view: string, href: string) => {
+  const handleNavigation = (view: ViewType, href: string) => {
     setActiveView(view);
     navigate(href);
   };

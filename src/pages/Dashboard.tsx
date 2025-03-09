@@ -16,17 +16,20 @@ import DonationManager from '@/components/dashboard/DonationManager';
 import TaxReports from '@/components/dashboard/TaxReports';
 import Analytics from '@/components/dashboard/Analytics';
 
+// Define all possible view types to ensure type safety
+type ViewType = 'overview' | 'waste-tracking' | 'donations' | 'tax-reports' | 
+  'analytics' | 'predictions' | 'leaderboard' | 'community-impact' | 
+  'history' | 'subscription' | 'profile';
+
 interface DashboardProps {
-  initialView?: 'overview' | 'waste-tracking' | 'donations' | 'tax-reports' | 
-    'analytics' | 'predictions' | 'leaderboard' | 'community-impact' | 
-    'history' | 'subscription' | 'profile';
+  initialView?: ViewType;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeView, setActiveView] = useState(initialView);
+  const [activeView, setActiveView] = useState<ViewType>(initialView);
   const [showProfile, setShowProfile] = useState(false);
   
   useEffect(() => {
@@ -124,10 +127,10 @@ const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
       <DashboardSidebar 
         onProfileClick={() => {
           setShowProfile(true);
-          setActiveView('profile');
+          setActiveView('profile' as ViewType);
         }}
         activeView={activeView}
-        setActiveView={(view) => {
+        setActiveView={(view: ViewType) => {
           setActiveView(view);
           setShowProfile(false);
         }}
@@ -139,7 +142,7 @@ const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
           showProfileButton={!showProfile}
           onProfileClick={() => {
             setShowProfile(true);
-            setActiveView('profile');
+            setActiveView('profile' as ViewType);
           }}
         />
         
