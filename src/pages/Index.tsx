@@ -20,9 +20,9 @@ const Index = () => {
       
       <div className="py-20 bg-wastewise-light-beige">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-wastewise-dark-green mb-4">
-              Simplified Analytics for Smart Decisions
+          <div className="text-center mb-12 animate-fade-in-up">
+            <h2 className="text-3xl md:text-4xl font-bold text-wastewise-dark-green mb-4 hover-3d">
+              Minimalistic Analytics for Smart Decisions
             </h2>
             <p className="text-lg text-wastewise-gray max-w-2xl mx-auto">
               See your impact at a glance with our intuitive visualization tools. 
@@ -30,7 +30,9 @@ const Index = () => {
             </p>
           </div>
           
-          <InteractiveAnalyticsDemo />
+          <div className="card-3d bg-white p-6 rounded-xl shadow-md border border-wastewise-light-green/20 mb-8 transform hover:scale-[1.02] transition-all duration-300">
+            <InteractiveAnalyticsDemo />
+          </div>
         </div>
       </div>
       

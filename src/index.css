@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -138,11 +137,59 @@
   .card-3d {
     transform-style: preserve-3d;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   }
   
   .card-3d:hover {
     transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Popup animation */
+  .popup-enter {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  
+  .popup-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 200ms, transform 200ms;
+  }
+  
+  .popup-exit {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .popup-exit-active {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 200ms, transform 200ms;
+  }
+  
+  /* Menu item hover effect */
+  .menu-item {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .menu-item:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: theme('colors.wastewise.green');
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+  }
+  
+  .menu-item:hover:after {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 }
 
@@ -225,6 +272,24 @@
   transform-style: preserve-3d;
 }
 
+@keyframes floatAnimation {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: floatAnimation 3s ease-in-out infinite;
+}
+
+/* Popup backdrop style */
+.popup-backdrop {
+  backdrop-filter: blur(2px);
+}
+
 /* Leaf animation for backgrounds */
 .leaf {
   position: absolute;
@@ -233,4 +298,3 @@
   background-color: rgba(139, 195, 74, 0.1);
   border-radius: 0 70% 0 70%;
 }
-

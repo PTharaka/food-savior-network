@@ -98,87 +98,95 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }
   if (!isOpen) return null;
   
   return (
-    <Card className="absolute top-14 right-2 w-80 shadow-xl z-[100] p-0 overflow-hidden max-h-[80vh] flex flex-col border-2 border-wastewise-light-green/20 backdrop-blur-md bg-white">
-      <div className="p-4 border-b flex items-center justify-between bg-wastewise-light-beige">
-        <div>
-          <h3 className="font-medium text-lg">Notifications</h3>
-          <p className="text-sm text-wastewise-gray">{unreadCount} unread</p>
-        </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-wastewise-gray hover:text-wastewise-dark-green"
-          onClick={markAllAsRead}
-        >
-          <CheckCircle className="h-4 w-4 mr-1" />
-          <span className="text-xs">Mark all read</span>
-        </Button>
-      </div>
+    <>
+      {/* Backdrop to prevent clicking through and to separate from background */}
+      <div 
+        className="fixed inset-0 bg-black/5 z-[90]" 
+        onClick={onClose}
+      />
       
-      <div className="overflow-y-auto flex-1 bg-white">
-        {notificationList.length > 0 ? (
-          <div className="divide-y">
-            {notificationList.map((notification) => (
-              <div 
-                key={notification.id}
-                className={cn(
-                  "p-4 hover:bg-wastewise-light-beige/50 transition-colors relative",
-                  !notification.read && "bg-wastewise-light-beige/30"
-                )}
-              >
-                <div className="flex">
-                  <div className="mr-3 mt-1">
-                    {getNotificationIcon(notification.type)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <h4 className="font-medium text-sm">{notification.title}</h4>
-                      <span className="text-xs text-wastewise-gray">{notification.time}</span>
+      <Card className="absolute top-14 right-2 w-80 shadow-xl z-[100] p-0 overflow-hidden max-h-[80vh] flex flex-col border-2 border-wastewise-light-green/20 bg-white animate-fade-in">
+        <div className="p-4 border-b flex items-center justify-between bg-wastewise-light-beige">
+          <div>
+            <h3 className="font-medium text-lg">Notifications</h3>
+            <p className="text-sm text-wastewise-gray">{unreadCount} unread</p>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-wastewise-gray hover:text-wastewise-dark-green"
+            onClick={markAllAsRead}
+          >
+            <CheckCircle className="h-4 w-4 mr-1" />
+            <span className="text-xs">Mark all read</span>
+          </Button>
+        </div>
+        
+        <div className="overflow-y-auto flex-1 bg-white">
+          {notificationList.length > 0 ? (
+            <div className="divide-y">
+              {notificationList.map((notification) => (
+                <div 
+                  key={notification.id}
+                  className={cn(
+                    "p-4 hover:bg-wastewise-light-beige/50 transition-colors relative",
+                    !notification.read && "bg-wastewise-light-beige/30"
+                  )}
+                >
+                  <div className="flex">
+                    <div className="mr-3 mt-1">
+                      {getNotificationIcon(notification.type)}
                     </div>
-                    <p className="text-sm text-wastewise-gray mt-1">{notification.message}</p>
-                    <div className="flex justify-end mt-2">
-                      {!notification.read && (
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <h4 className="font-medium text-sm">{notification.title}</h4>
+                        <span className="text-xs text-wastewise-gray">{notification.time}</span>
+                      </div>
+                      <p className="text-sm text-wastewise-gray mt-1">{notification.message}</p>
+                      <div className="flex justify-end mt-2">
+                        {!notification.read && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 text-xs text-wastewise-green hover:text-wastewise-dark-green"
+                            onClick={() => markAsRead(notification.id)}
+                          >
+                            Mark as read
+                          </Button>
+                        )}
                         <Button 
                           variant="ghost" 
-                          size="sm" 
-                          className="h-8 text-xs text-wastewise-green hover:text-wastewise-dark-green"
-                          onClick={() => markAsRead(notification.id)}
+                          size="sm"
+                          className="h-8 text-xs text-wastewise-gray hover:text-red-500"
+                          onClick={() => deleteNotification(notification.id)}
                         >
-                          Mark as read
+                          Delete
                         </Button>
-                      )}
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="h-8 text-xs text-wastewise-gray hover:text-red-500"
-                        onClick={() => deleteNotification(notification.id)}
-                      >
-                        Delete
-                      </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="p-8 text-center text-wastewise-gray">
-            <p>No notifications</p>
-          </div>
-        )}
-      </div>
-      
-      <div className="p-3 border-t">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="w-full text-wastewise-gray hover:text-wastewise-dark-green"
-          onClick={onClose}
-        >
-          Close
-        </Button>
-      </div>
-    </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="p-8 text-center text-wastewise-gray">
+              <p>No notifications</p>
+            </div>
+          )}
+        </div>
+        
+        <div className="p-3 border-t">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full text-wastewise-gray hover:text-wastewise-dark-green"
+            onClick={onClose}
+          >
+            Close
+          </Button>
+        </div>
+      </Card>
+    </>
   );
 };
 

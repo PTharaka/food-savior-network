@@ -125,17 +125,21 @@ export const DashboardSidebar = ({
 
   return (
     <div className={cn(
-      "h-screen flex flex-col border-r border-wastewise-light-gray/20 bg-white fixed transition-all duration-300",
+      "h-screen flex flex-col border-r border-wastewise-light-gray/20 bg-white fixed transition-all duration-300 z-20",
       isCollapsed ? "w-16" : "w-64",
       className
     )}>
       <div className="p-4 border-b border-wastewise-light-gray/20 flex items-center justify-between">
-        {!isCollapsed && <span className="text-wastewise-green text-xl font-bold">WasteWise</span>}
-        {isCollapsed && <span className="text-wastewise-green text-xl font-bold mx-auto">W</span>}
+        {!isCollapsed && (
+          <span className="text-wastewise-green text-xl font-bold animate-fade-in">WasteWise</span>
+        )}
+        {isCollapsed && (
+          <span className="text-wastewise-green text-xl font-bold mx-auto animate-fade-in">W</span>
+        )}
         <Button
           variant="ghost" 
           size="icon" 
-          className="text-wastewise-gray hover:text-wastewise-dark-gray hover:bg-wastewise-light-green/10"
+          className="text-wastewise-gray hover:text-wastewise-dark-gray hover:bg-wastewise-light-green/10 animate-fade-in"
           onClick={toggleSidebar}
         >
           {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -260,17 +264,17 @@ export const DashboardSidebar = ({
       <div className="mt-auto p-3 border-t border-wastewise-light-gray/20 relative">
         <div 
           className={cn(
-            "flex items-center space-x-2 cursor-pointer",
+            "flex items-center space-x-2 cursor-pointer hover:bg-wastewise-light-green/10 p-2 rounded-lg transition-all",
             isCollapsed && "justify-center"
           )}
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
-          <div className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green">
+          <div className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green hover:scale-105 transition-transform">
             {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
           </div>
           
           {!isCollapsed && (
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 animate-fade-in">
               <h3 className="font-medium text-sm truncate">
                 {user?.businessName || user?.email?.split('@')[0] || 'User'}
               </h3>
@@ -282,7 +286,7 @@ export const DashboardSidebar = ({
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-wastewise-gray hover:text-wastewise-dark-green"
+              className="text-wastewise-gray hover:text-wastewise-dark-green animate-fade-in"
               onClick={(e) => {
                 e.stopPropagation();
                 logout();
@@ -293,10 +297,10 @@ export const DashboardSidebar = ({
           )}
         </div>
         
-        <UserProfileMenu 
-          isOpen={profileMenuOpen && isCollapsed} 
+        {profileMenuOpen && <UserProfileMenu 
+          isOpen={profileMenuOpen} 
           onClose={() => setProfileMenuOpen(false)} 
-        />
+        />}
       </div>
     </div>
   );
