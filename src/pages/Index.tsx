@@ -18,7 +18,9 @@ import {
   Legend, 
   ResponsiveContainer, 
   Area, 
-  AreaChart 
+  AreaChart,
+  ReferenceLine,
+  ReferenceDot
 } from 'recharts';
 
 // Sample data for the minimalistic analytics chart
@@ -61,7 +63,7 @@ const Index = () => {
             
             <div className="h-80 bg-wastewise-cream/30 p-4 rounded-lg">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
+                <LineChart
                   data={analyticsData}
                   margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                 >
@@ -77,49 +79,80 @@ const Index = () => {
                     }}
                   />
                   <Legend />
-                  <Area 
+                  
+                  {/* Line with markers for waste */}
+                  <Line 
                     type="monotone" 
                     dataKey="waste" 
-                    stackId="1"
                     stroke="#ef4444" 
-                    fill="#ef4444" 
-                    fillOpacity={0.3}
-                    activeDot={{ r: 6, strokeWidth: 0 }}
+                    strokeWidth={2}
+                    dot={{ r: 6, strokeWidth: 2, fill: "#fff" }}
+                    activeDot={{ r: 8, strokeWidth: 0, fill: "#ef4444" }}
+                    animationDuration={1500}
                   />
-                  <Area 
+                  
+                  {/* Line with markers for recycled */}
+                  <Line 
                     type="monotone" 
                     dataKey="recycled" 
-                    stackId="1"
                     stroke="#3b82f6" 
-                    fill="#3b82f6" 
-                    fillOpacity={0.3}
-                    activeDot={{ r: 6, strokeWidth: 0 }}
+                    strokeWidth={2}
+                    dot={{ r: 6, strokeWidth: 2, fill: "#fff" }}
+                    activeDot={{ r: 8, strokeWidth: 0, fill: "#3b82f6" }}
+                    animationDuration={1500}
+                    animationDelay={300}
                   />
-                  <Area 
+                  
+                  {/* Line with markers for donated */}
+                  <Line 
                     type="monotone" 
                     dataKey="donated" 
-                    stackId="1"
                     stroke="#10b981" 
-                    fill="#10b981" 
-                    fillOpacity={0.3}
-                    activeDot={{ r: 6, strokeWidth: 0 }}
+                    strokeWidth={2}
+                    dot={{ r: 6, strokeWidth: 2, fill: "#fff" }}
+                    activeDot={{ r: 8, strokeWidth: 0, fill: "#10b981" }}
+                    animationDuration={1500}
+                    animationDelay={600}
                   />
-                </AreaChart>
+                  
+                  {/* Reference line for average */}
+                  <ReferenceLine 
+                    y={50} 
+                    stroke="#9ca3af" 
+                    strokeDasharray="3 3" 
+                    label={{ 
+                      value: 'Target', 
+                      position: 'insideBottomRight',
+                      fill: '#9ca3af',
+                      fontSize: 12
+                    }} 
+                  />
+                  
+                  {/* Important point highlight */}
+                  <ReferenceDot 
+                    x="Week 7" 
+                    y={40} 
+                    r={8} 
+                    fill="#10b981" 
+                    stroke="none" 
+                    strokeWidth={2} 
+                  />
+                </LineChart>
               </ResponsiveContainer>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              <div className="bg-wastewise-light-green/10 p-4 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 animate-fade-in">
+              <div className="bg-wastewise-light-green/10 p-4 rounded-lg transform hover:translate-y-[-5px] transition-all duration-300">
                 <p className="text-wastewise-gray text-sm mb-1">Total Waste</p>
                 <p className="text-wastewise-dark-green text-2xl font-bold">436 kg</p>
                 <p className="text-wastewise-green text-xs">-12% from last month</p>
               </div>
-              <div className="bg-wastewise-light-green/10 p-4 rounded-lg">
+              <div className="bg-wastewise-light-green/10 p-4 rounded-lg transform hover:translate-y-[-5px] transition-all duration-300 delay-100">
                 <p className="text-wastewise-gray text-sm mb-1">Recycled</p>
                 <p className="text-wastewise-dark-green text-2xl font-bold">226 kg</p>
                 <p className="text-wastewise-green text-xs">+18% from last month</p>
               </div>
-              <div className="bg-wastewise-light-green/10 p-4 rounded-lg">
+              <div className="bg-wastewise-light-green/10 p-4 rounded-lg transform hover:translate-y-[-5px] transition-all duration-300 delay-200">
                 <p className="text-wastewise-gray text-sm mb-1">Donated</p>
                 <p className="text-wastewise-dark-green text-2xl font-bold">286 kg</p>
                 <p className="text-wastewise-green text-xs">+24% from last month</p>

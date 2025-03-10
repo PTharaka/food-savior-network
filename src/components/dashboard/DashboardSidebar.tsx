@@ -237,27 +237,6 @@ export const DashboardSidebar = ({
             onClick={() => handleNavigation('history', '/dashboard/history')}
             isCollapsed={isCollapsed}
           />
-          
-          <SectionTitle>Account</SectionTitle>
-          
-          <NavItem 
-            href="/dashboard/settings" 
-            view="settings"
-            icon={<Settings className="h-4 w-4" />} 
-            label="Settings" 
-            active={activeView === 'settings'}
-            onClick={() => handleNavigation('settings', '/dashboard/settings')}
-            isCollapsed={isCollapsed}
-          />
-          <NavItem 
-            href="/dashboard/subscription" 
-            view="subscription"
-            icon={<BadgeDollarSign className="h-4 w-4" />} 
-            label="Subscription" 
-            active={activeView === 'subscription'} 
-            onClick={() => handleNavigation('subscription', '/dashboard/subscription')}
-            isCollapsed={isCollapsed}
-          />
         </nav>
       </div>
 
@@ -269,9 +248,21 @@ export const DashboardSidebar = ({
           )}
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
-          <div className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green hover:scale-105 transition-transform">
+          <div className={cn(
+            "bg-wastewise-green/20 rounded-full flex items-center justify-center text-wastewise-green hover:scale-105 transition-transform",
+            isCollapsed ? "h-10 w-10 text-lg font-bold" : "h-10 w-10 text-lg font-bold"
+          )}>
             {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
           </div>
+          
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium text-sm truncate">
+                {user?.businessName || user?.email?.split('@')[0] || 'User'}
+              </h3>
+              <p className="text-xs text-wastewise-gray truncate">{user?.email}</p>
+            </div>
+          )}
           
           {!isCollapsed && (
             <Button 

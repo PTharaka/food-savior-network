@@ -45,7 +45,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName }) => {
             
             {notificationsOpen && (
               <div 
-                className="fixed inset-0 bg-black/20 z-30"
+                className="fixed inset-0 bg-black/20 z-30 backdrop-blur-[2px]"
                 onClick={() => setNotificationsOpen(false)}
               ></div>
             )}
