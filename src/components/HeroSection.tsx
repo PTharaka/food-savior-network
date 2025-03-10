@@ -7,7 +7,8 @@ import {
   XAxis,
   YAxis,
   ResponsiveContainer,
-  Tooltip
+  Tooltip,
+  CartesianGrid
 } from 'recharts';
 
 // Sample data for the hero analytics chart
@@ -102,10 +103,10 @@ const HeroSection: React.FC = () => {
           <div ref={heroRef} className="order-1 lg:order-2 relative">
             <div 
               ref={chartRef} 
-              className="glass-panel p-6 rounded-2xl shadow-lg animate-fade-in"
+              className="glass-panel p-6 rounded-2xl shadow-lg animate-fade-in transform transition-all hover:shadow-xl"
               onMouseEnter={() => handleChartHover(true)}
               onMouseLeave={() => handleChartHover(false)}
-              style={{ transition: 'transform 0.5s ease-out' }}
+              style={{ transition: 'transform 0.5s ease-out, box-shadow 0.3s ease' }}
             >
               <div className="absolute -top-4 -right-4 bg-wastewise-green text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                 Live Dashboard
@@ -138,25 +139,27 @@ const HeroSection: React.FC = () => {
                   <div className="text-wastewise-green text-xs mt-1">↑ 22% vs last month</div>
                 </div>
               </div>
-              <div className="h-32 bg-wastewise-beige rounded-lg overflow-hidden">
+              <div className="h-44 bg-wastewise-beige/50 rounded-lg overflow-hidden p-2">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={analyticsData}
-                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                    margin={{ top: 20, right: 10, left: 10, bottom: 10 }}
                   >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis 
                       dataKey="name" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fontSize: 8, fill: '#757575' }} 
+                      tick={{ fontSize: 10, fill: '#757575' }} 
                     />
                     <YAxis hide={true} />
                     <Tooltip 
                       contentStyle={{ 
                         backgroundColor: 'rgba(255, 255, 255, 0.9)', 
-                        borderRadius: '4px', 
-                        fontSize: 10, 
-                        padding: '8px' 
+                        borderRadius: '8px', 
+                        fontSize: 12, 
+                        padding: '10px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
                       }} 
                     />
                     <Line 
@@ -164,16 +167,16 @@ const HeroSection: React.FC = () => {
                       dataKey="waste" 
                       stroke="#ef4444" 
                       strokeWidth={2}
-                      dot={false}
-                      activeDot={{ r: 4 }}
+                      dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+                      activeDot={{ r: 6, strokeWidth: 0, fill: "#ef4444" }}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="saved" 
                       stroke="#10b981" 
                       strokeWidth={2}
-                      dot={false}
-                      activeDot={{ r: 4 }}
+                      dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+                      activeDot={{ r: 6, strokeWidth: 0, fill: "#10b981" }}
                     />
                   </LineChart>
                 </ResponsiveContainer>

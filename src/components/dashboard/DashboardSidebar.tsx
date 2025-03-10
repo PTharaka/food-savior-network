@@ -264,7 +264,7 @@ export const DashboardSidebar = ({
       <div className="mt-auto p-3 border-t border-wastewise-light-gray/20 relative">
         <div 
           className={cn(
-            "flex items-center space-x-2 cursor-pointer hover:bg-wastewise-light-green/10 p-2 rounded-lg transition-all",
+            "flex items-center gap-2 cursor-pointer hover:bg-wastewise-light-green/10 p-2 rounded-lg transition-all",
             isCollapsed && "justify-center"
           )}
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
@@ -274,19 +274,10 @@ export const DashboardSidebar = ({
           </div>
           
           {!isCollapsed && (
-            <div className="flex-1 min-w-0 animate-fade-in">
-              <h3 className="font-medium text-sm truncate">
-                {user?.businessName || user?.email?.split('@')[0] || 'User'}
-              </h3>
-              <p className="text-xs text-wastewise-gray truncate">{user?.email}</p>
-            </div>
-          )}
-
-          {!isCollapsed && (
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-wastewise-gray hover:text-wastewise-dark-green animate-fade-in"
+              className="ml-auto text-wastewise-gray hover:text-wastewise-dark-green animate-fade-in"
               onClick={(e) => {
                 e.stopPropagation();
                 logout();

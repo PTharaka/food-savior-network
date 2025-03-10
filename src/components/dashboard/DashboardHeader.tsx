@@ -42,6 +42,14 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName }) => {
                 3
               </span>
             </Button>
+            
+            {notificationsOpen && (
+              <div 
+                className="fixed inset-0 bg-black/20 z-30"
+                onClick={() => setNotificationsOpen(false)}
+              ></div>
+            )}
+            
             <NotificationPanel 
               isOpen={notificationsOpen} 
               onClose={() => setNotificationsOpen(false)}
