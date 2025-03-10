@@ -13,7 +13,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   return (
-    <header className="bg-white border-b p-4">
+    <header className="bg-white border-b p-4 relative z-10">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-wastewise-dark-gray">Welcome, {userName}</h1>
@@ -34,11 +34,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName }) => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="relative"
+              className="relative hover:bg-wastewise-light-green/10"
               onClick={() => setNotificationsOpen(!notificationsOpen)}
             >
               <Bell className="h-5 w-5 text-wastewise-gray" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 bg-wastewise-green rounded-full flex items-center justify-center text-[10px] text-white font-bold">
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-wastewise-green rounded-full flex items-center justify-center text-[10px] text-white font-bold animate-pulse">
                 3
               </span>
             </Button>

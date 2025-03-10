@@ -98,7 +98,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }
   if (!isOpen) return null;
   
   return (
-    <Card className="absolute top-16 right-4 w-80 shadow-lg z-50 p-0 overflow-hidden max-h-[80vh] flex flex-col">
+    <Card className="absolute top-14 right-2 w-80 shadow-xl z-[100] p-0 overflow-hidden max-h-[80vh] flex flex-col border-2 border-wastewise-light-green/20 backdrop-blur-md bg-white">
       <div className="p-4 border-b flex items-center justify-between bg-wastewise-light-beige">
         <div>
           <h3 className="font-medium text-lg">Notifications</h3>
@@ -115,7 +115,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }
         </Button>
       </div>
       
-      <div className="overflow-y-auto flex-1">
+      <div className="overflow-y-auto flex-1 bg-white">
         {notificationList.length > 0 ? (
           <div className="divide-y">
             {notificationList.map((notification) => (

@@ -22,11 +22,11 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-wastewise-dark-green mb-4">
-              Interactive Analytics Dashboard
+              Simplified Analytics for Smart Decisions
             </h2>
             <p className="text-lg text-wastewise-gray max-w-2xl mx-auto">
-              Visualize your waste reduction journey with our intuitive analytics tools.
-              Make data-driven decisions to maximize your environmental impact.
+              See your impact at a glance with our intuitive visualization tools. 
+              Turn data into actionable insights - no complexity, just clarity.
             </p>
           </div>
           

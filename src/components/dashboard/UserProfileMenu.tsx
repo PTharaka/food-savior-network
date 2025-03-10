@@ -28,7 +28,7 @@ const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ isOpen, onClose }) =>
   };
   
   return (
-    <Card className="absolute bottom-16 left-4 w-60 shadow-lg z-50 p-0 overflow-hidden">
+    <Card className="absolute bottom-16 left-4 w-64 shadow-xl z-[100] p-0 overflow-hidden border-2 border-wastewise-light-green/20 bg-white">
       <div className="p-4 border-b flex items-center space-x-3 bg-wastewise-light-beige">
         <div className="bg-wastewise-green/20 h-10 w-10 rounded-full flex items-center justify-center text-lg font-bold text-wastewise-green">
           {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}

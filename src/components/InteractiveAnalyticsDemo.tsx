@@ -1,10 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -24,7 +23,7 @@ const monthlyData = [
 ];
 
 const MetricCard = ({ title, value, change, icon }: { title: string; value: string; change: string; icon: string }) => (
-  <div className="bg-wastewise-light-beige p-4 rounded-lg border border-wastewise-light-gray/20">
+  <div className="bg-wastewise-light-beige p-4 rounded-lg border border-wastewise-light-gray/20 hover:shadow-md transition-all transform hover:scale-[1.02] duration-300">
     <div className="flex justify-between items-start">
       <div>
         <p className="text-sm text-wastewise-gray">{title}</p>
@@ -39,8 +38,44 @@ const MetricCard = ({ title, value, change, icon }: { title: string; value: stri
 );
 
 const InteractiveAnalyticsDemo: React.FC = () => {
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in-up');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      threshold: 0.3,
+    });
+
+    if (chartContainerRef.current) {
+      observer.observe(chartContainerRef.current);
+    }
+
+    return () => {
+      if (chartContainerRef.current) {
+        observer.unobserve(chartContainerRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+    <div 
+      className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden transform transition-all duration-500 hover:shadow-lg"
+      style={{ 
+        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+        transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out'
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      ref={chartContainerRef}
+    >
       <div className="p-6 border-b border-gray-200">
         <div className="flex flex-col md:flex-row justify-between md:items-center mb-6">
           <div>
@@ -81,56 +116,66 @@ const InteractiveAnalyticsDemo: React.FC = () => {
       </div>
 
       <div className="p-6">
-        <div className="h-80">
+        <div className="h-80 overflow-hidden">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
+            <LineChart
               data={monthlyData}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              margin={{ top: 20, right: 30, left: 10, bottom: 10 }}
             >
-              <defs>
-                <linearGradient id="colorWaste" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
-                </linearGradient>
-                <linearGradient id="colorSaved" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
-                </linearGradient>
-                <linearGradient id="colorDonated" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                </linearGradient>
-              </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} />
-              <YAxis axisLine={false} tickLine={false} />
-              <Tooltip />
-              <Legend verticalAlign="top" height={36} />
-              <Area 
+              <XAxis 
+                dataKey="name" 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{ fill: '#757575', fontSize: 12 }}
+              />
+              <YAxis 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{ fill: '#757575', fontSize: 12 }}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                  borderRadius: '8px', 
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', 
+                  border: '1px solid #e0e0e0' 
+                }} 
+              />
+              <Legend 
+                verticalAlign="top" 
+                height={36} 
+                iconType="circle"
+                iconSize={8}
+              />
+              <Line 
                 type="monotone" 
                 dataKey="waste" 
                 name="Food Waste (kg)" 
                 stroke="#ef4444" 
-                fillOpacity={1} 
-                fill="url(#colorWaste)" 
+                strokeWidth={2}
+                dot={{ r: 4, strokeWidth: 2 }}
+                activeDot={{ r: 6, strokeWidth: 0, fill: '#ef4444' }}
               />
-              <Area 
+              <Line 
                 type="monotone" 
                 dataKey="saved" 
                 name="Waste Saved (kg)" 
                 stroke="#10b981" 
-                fillOpacity={1} 
-                fill="url(#colorSaved)" 
+                strokeWidth={2}
+                dot={{ r: 4, strokeWidth: 2 }}
+                activeDot={{ r: 6, strokeWidth: 0, fill: '#10b981' }}
               />
-              <Area 
+              <Line 
                 type="monotone" 
                 dataKey="donated" 
                 name="Food Donated (kg)" 
                 stroke="#3b82f6" 
-                fillOpacity={1} 
-                fill="url(#colorDonated)" 
+                strokeWidth={2}
+                dot={{ r: 4, strokeWidth: 2 }}
+                activeDot={{ r: 6, strokeWidth: 0, fill: '#3b82f6' }}
               />
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
