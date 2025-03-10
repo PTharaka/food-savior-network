@@ -100,7 +100,6 @@ const Index = () => {
                     dot={{ r: 6, strokeWidth: 2, fill: "#fff" }}
                     activeDot={{ r: 8, strokeWidth: 0, fill: "#3b82f6" }}
                     animationDuration={1500}
-                    animationDelay={300}
                   />
                   
                   {/* Line with markers for donated */}
@@ -112,7 +111,6 @@ const Index = () => {
                     dot={{ r: 6, strokeWidth: 2, fill: "#fff" }}
                     activeDot={{ r: 8, strokeWidth: 0, fill: "#10b981" }}
                     animationDuration={1500}
-                    animationDelay={600}
                   />
                   
                   {/* Reference line for average */}
