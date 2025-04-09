@@ -249,10 +249,12 @@ export const DashboardSidebar = ({
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
           <div className={cn(
-            "bg-wastewise-green/20 rounded-full flex items-center justify-center text-wastewise-green transition-transform",
-            isCollapsed ? "h-12 w-12 text-xl font-bold" : "h-10 w-10 text-lg font-bold"
+            "bg-wastewise-green/20 rounded-full flex items-center justify-center text-wastewise-green",
+            isCollapsed ? "h-10 w-10" : "h-10 w-10"
           )}>
-            {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
+            <span className={isCollapsed ? "text-base" : "text-base"}>
+              {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
+            </span>
           </div>
           
           {!isCollapsed && (
