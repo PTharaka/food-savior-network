@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ViewType } from '@/pages/Dashboard';
 import UserProfileMenu from './UserProfileMenu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 type NavItemProps = {
   icon: React.ReactNode;
@@ -248,14 +248,14 @@ export const DashboardSidebar = ({
           )}
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
-          <div className={cn(
-            "bg-wastewise-green/20 rounded-full flex items-center justify-center text-wastewise-green",
+          <Avatar className={cn(
+            "bg-wastewise-green/20 text-wastewise-green",
             isCollapsed ? "h-10 w-10" : "h-10 w-10"
           )}>
-            <span className={isCollapsed ? "text-base" : "text-base"}>
+            <AvatarFallback className="text-wastewise-green">
               {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
-            </span>
-          </div>
+            </AvatarFallback>
+          </Avatar>
           
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
