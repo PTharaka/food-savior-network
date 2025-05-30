@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Menu, X, LogOut } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -14,21 +14,21 @@ const Navbar = () => {
   const location = useLocation();
   const isLandingPage = location.pathname === '/';
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  const handleScroll = useCallback(() => {
+    setIsScrolled(window.scrollY > 10);
   }, []);
 
-  const handleLogout = () => {
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
+  const handleLogout = useCallback(() => {
     logout();
     navigate('/');
-  };
+  }, [logout, navigate]);
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = useCallback((sectionId: string) => {
     setMobileMenuOpen(false);
     if (location.pathname !== '/') {
       navigate('/', { state: { scrollTo: sectionId } });
@@ -39,14 +39,18 @@ const Navbar = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, [location.pathname, navigate]);
+
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
 
   return (
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 md:px-10',
         isScrolled
-          ? 'bg-white/80 backdrop-blur-md shadow-sm'
+          ? 'bg-white/90 backdrop-blur-md shadow-sm'
           : 'bg-transparent'
       )}
     >
@@ -55,7 +59,6 @@ const Navbar = () => {
           <span className="text-wastewise-green text-2xl font-bold">WasteWise</span>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           {isAuthenticated && !isLandingPage ? (
             <>
@@ -107,16 +110,15 @@ const Navbar = () => {
           )}
         </nav>
 
-        {/* Mobile Menu Button */}
         <button 
           className="md:hidden text-wastewise-dark-gray"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle mobile menu"
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <div className={cn(
         'fixed inset-0 bg-white z-40 pt-20 px-6 transition-transform duration-300 ease-in-out transform md:hidden',
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
@@ -127,7 +129,7 @@ const Navbar = () => {
               <Link
                 to="/dashboard" 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={closeMobileMenu}
               >
                 Dashboard
               </Link>
@@ -135,7 +137,7 @@ const Navbar = () => {
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-red transition-colors flex items-center"
                 onClick={() => {
                   handleLogout();
-                  setMobileMenuOpen(false);
+                  closeMobileMenu();
                 }}
               >
                 <LogOut className="h-5 w-5 mr-2" />
@@ -171,14 +173,14 @@ const Navbar = () => {
               <Link
                 to="/login" 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={closeMobileMenu}
               >
                 Login
               </Link>
               <Link 
                 to="/signup" 
                 className="btn-primary text-center"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={closeMobileMenu}
               >
                 Get Early Access
               </Link>

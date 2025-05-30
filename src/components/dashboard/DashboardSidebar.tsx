@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -67,7 +68,7 @@ const NavItem = ({
         }
       }}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200",
         active
           ? "bg-wastewise-light-green/20 text-wastewise-dark-green font-medium"
           : "text-wastewise-gray hover:bg-wastewise-light-green/10 hover:text-wastewise-dark-green",
@@ -243,16 +244,13 @@ export const DashboardSidebar = ({
       <div className="mt-auto p-3 border-t border-wastewise-light-gray/20 relative">
         <div 
           className={cn(
-            "flex items-center gap-2 cursor-pointer hover:bg-wastewise-light-green/10 p-2 rounded-lg transition-all",
+            "flex items-center gap-2 cursor-pointer hover:bg-wastewise-light-green/10 p-2 rounded-lg transition-all duration-200",
             isCollapsed && "justify-center"
           )}
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
-          <Avatar className={cn(
-            "bg-wastewise-green/20 text-wastewise-green",
-            isCollapsed ? "h-10 w-10" : "h-10 w-10"
-          )}>
-            <AvatarFallback className="text-wastewise-green">
+          <Avatar className="h-10 w-10 bg-wastewise-green/20 flex-shrink-0">
+            <AvatarFallback className="bg-wastewise-green/20 text-wastewise-green font-medium">
               {user?.businessName ? user.businessName.charAt(0) : user?.email?.charAt(0) || 'U'}
             </AvatarFallback>
           </Avatar>
@@ -270,7 +268,7 @@ export const DashboardSidebar = ({
             <Button 
               variant="ghost" 
               size="icon"
-              className="ml-auto text-wastewise-gray hover:text-wastewise-dark-green animate-fade-in"
+              className="ml-auto text-wastewise-gray hover:text-wastewise-dark-green transition-colors duration-200"
               onClick={(e) => {
                 e.stopPropagation();
                 logout();

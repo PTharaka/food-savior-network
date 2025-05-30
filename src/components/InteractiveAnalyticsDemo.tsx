@@ -12,7 +12,6 @@ import {
   Legend
 } from 'recharts';
 
-// Sample data for interactive demo
 const monthlyData = [
   { name: 'Jan', waste: 120, saved: 30, donated: 25 },
   { name: 'Feb', waste: 115, saved: 35, donated: 30 },
@@ -22,7 +21,7 @@ const monthlyData = [
   { name: 'Jun', waste: 95, saved: 55, donated: 60 },
 ];
 
-const MetricCard = ({ title, value, change, icon }: { title: string; value: string; change: string; icon: string }) => (
+const MetricCard = React.memo(({ title, value, change, icon }: { title: string; value: string; change: string; icon: string }) => (
   <div className="bg-wastewise-light-beige p-4 rounded-lg border border-wastewise-light-gray/20 hover:shadow-md transition-all transform hover:scale-[1.02] duration-300">
     <div className="flex justify-between items-start">
       <div>
@@ -35,23 +34,28 @@ const MetricCard = ({ title, value, change, icon }: { title: string; value: stri
     </div>
     <p className="text-xs text-wastewise-green mt-2">{change}</p>
   </div>
-);
+));
+
+MetricCard.displayName = 'MetricCard';
 
 const InteractiveAnalyticsDemo: React.FC = () => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in-up');
+          setIsVisible(true);
+          entry.target.classList.add('animate-fade-in');
         }
       });
     };
 
     const observer = new IntersectionObserver(handleIntersection, {
       threshold: 0.3,
+      rootMargin: '10px',
     });
 
     if (chartContainerRef.current) {
@@ -117,66 +121,68 @@ const InteractiveAnalyticsDemo: React.FC = () => {
 
       <div className="p-6">
         <div className="h-80 overflow-hidden">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={monthlyData}
-              margin={{ top: 20, right: 30, left: 10, bottom: 10 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-              <XAxis 
-                dataKey="name" 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fill: '#757575', fontSize: 12 }}
-              />
-              <YAxis 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fill: '#757575', fontSize: 12 }}
-              />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                  borderRadius: '8px', 
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', 
-                  border: '1px solid #e0e0e0' 
-                }} 
-              />
-              <Legend 
-                verticalAlign="top" 
-                height={36} 
-                iconType="circle"
-                iconSize={8}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="waste" 
-                name="Food Waste (kg)" 
-                stroke="#ef4444" 
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6, strokeWidth: 0, fill: '#ef4444' }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="saved" 
-                name="Waste Saved (kg)" 
-                stroke="#10b981" 
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6, strokeWidth: 0, fill: '#10b981' }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="donated" 
-                name="Food Donated (kg)" 
-                stroke="#3b82f6" 
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6, strokeWidth: 0, fill: '#3b82f6' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {isVisible && (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={monthlyData}
+                margin={{ top: 20, right: 30, left: 10, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#757575', fontSize: 12 }}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#757575', fontSize: 12 }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                    borderRadius: '8px', 
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', 
+                    border: '1px solid #e0e0e0' 
+                  }} 
+                />
+                <Legend 
+                  verticalAlign="top" 
+                  height={36} 
+                  iconType="circle"
+                  iconSize={8}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="waste" 
+                  name="Food Waste (kg)" 
+                  stroke="#ef4444" 
+                  strokeWidth={2}
+                  dot={{ r: 4, strokeWidth: 2 }}
+                  activeDot={{ r: 6, strokeWidth: 0, fill: '#ef4444' }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="saved" 
+                  name="Waste Saved (kg)" 
+                  stroke="#10b981" 
+                  strokeWidth={2}
+                  dot={{ r: 4, strokeWidth: 2 }}
+                  activeDot={{ r: 6, strokeWidth: 0, fill: '#10b981' }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="donated" 
+                  name="Food Donated (kg)" 
+                  stroke="#3b82f6" 
+                  strokeWidth={2}
+                  dot={{ r: 4, strokeWidth: 2 }}
+                  activeDot={{ r: 6, strokeWidth: 0, fill: '#3b82f6' }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
     </div>

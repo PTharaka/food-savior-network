@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -7,7 +7,6 @@ import HowItWorksSection from '@/components/HowItWorksSection';
 import PricingSection from '@/components/PricingSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
-import InteractiveAnalyticsDemo from '@/components/InteractiveAnalyticsDemo';
 import { 
   LineChart, 
   Line, 
@@ -17,13 +16,12 @@ import {
   Tooltip, 
   Legend, 
   ResponsiveContainer, 
-  Area, 
-  AreaChart,
   ReferenceLine,
   ReferenceDot
 } from 'recharts';
 
-// Sample data for the minimalistic analytics chart
+const InteractiveAnalyticsDemo = lazy(() => import('@/components/InteractiveAnalyticsDemo'));
+
 const analyticsData = [
   { name: 'Week 1', waste: 65, recycled: 28, donated: 37 },
   { name: 'Week 2', waste: 59, recycled: 30, donated: 40 },
@@ -45,7 +43,7 @@ const Index = () => {
       
       <div className="py-20 bg-wastewise-light-beige">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12 animate-fade-in-up">
+          <div className="text-center mb-12 animate-fade-in">
             <h2 className="text-3xl md:text-4xl font-bold text-wastewise-dark-green mb-4 hover-3d">
               Minimalistic Analytics for Smart Decisions
             </h2>
@@ -80,7 +78,6 @@ const Index = () => {
                   />
                   <Legend />
                   
-                  {/* Line with markers for waste */}
                   <Line 
                     type="monotone" 
                     dataKey="waste" 
@@ -91,7 +88,6 @@ const Index = () => {
                     animationDuration={1500}
                   />
                   
-                  {/* Line with markers for recycled */}
                   <Line 
                     type="monotone" 
                     dataKey="recycled" 
@@ -102,7 +98,6 @@ const Index = () => {
                     animationDuration={1500}
                   />
                   
-                  {/* Line with markers for donated */}
                   <Line 
                     type="monotone" 
                     dataKey="donated" 
@@ -113,7 +108,6 @@ const Index = () => {
                     animationDuration={1500}
                   />
                   
-                  {/* Reference line for average */}
                   <ReferenceLine 
                     y={50} 
                     stroke="#9ca3af" 
@@ -126,7 +120,6 @@ const Index = () => {
                     }} 
                   />
                   
-                  {/* Important point highlight */}
                   <ReferenceDot 
                     x="Week 7" 
                     y={40} 
