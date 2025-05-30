@@ -1,38 +1,59 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import UserProfile from '@/components/UserProfile';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Menu } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { 
-  SidebarProvider, 
-  SidebarInset, 
-  SidebarTrigger 
-} from "@/components/ui/sidebar";
 
-const ProfilePageContent = () => {
+const ProfilePage = () => {
   const navigate = useNavigate();
+  const [activeView, setActiveView] = useState('profile');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
   
   return (
-    <div className="min-h-screen flex w-full">
+    <div className="min-h-screen flex overflow-hidden bg-wastewise-cream/50">
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30" 
+          onClick={() => setSidebarOpen(false)} 
+        />
+      )}
+      
       {/* Sidebar */}
-      <DashboardSidebar 
-        onProfileClick={() => {}}
-        activeView="profile"
-        setActiveView={(view) => {
-          navigate(`/dashboard/${view === 'overview' ? '' : view}`);
-        }}
-      />
+      <div className={`
+        ${isMobile ? 'fixed' : 'relative'} 
+        h-full w-64 z-40 bg-white transition-transform duration-300 ease-in-out
+        ${isMobile && !sidebarOpen ? '-translate-x-full' : 'translate-x-0'}
+      `}>
+        <DashboardSidebar 
+          onProfileClick={() => {}}
+          activeView="profile"
+          setActiveView={(view) => {
+            navigate(`/dashboard/${view === 'overview' ? '' : view}`);
+            if (isMobile) setSidebarOpen(false);
+          }}
+        />
+      </div>
       
       {/* Main Content */}
-      <SidebarInset className="flex-1">
+      <div className={`flex-1 flex flex-col overflow-hidden ${!isMobile ? 'ml-0' : ''}`}>
         {/* Header */}
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
+        <header className="bg-white shadow-sm py-3 px-4 sm:py-4 sm:px-6 border-b">
+          <div className="flex items-center gap-3">
+            {isMobile && (
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setSidebarOpen(true)}
+                className="p-2"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            )}
             
             <Link to="/dashboard">
               <Button variant="ghost" className="gap-2 text-sm sm:text-base">
@@ -42,8 +63,6 @@ const ProfilePageContent = () => {
               </Button>
             </Link>
             
-            <div className="h-6 w-px bg-border mx-2" />
-            
             <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-wastewise-dark-gray">
               Account Settings
             </h1>
@@ -51,21 +70,13 @@ const ProfilePageContent = () => {
         </header>
 
         {/* Main Content Area */}
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="mx-auto grid w-full max-w-6xl gap-2">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
+          <div className="max-w-4xl mx-auto">
             <UserProfile onClose={() => navigate('/dashboard')} />
           </div>
-        </div>
-      </SidebarInset>
+        </main>
+      </div>
     </div>
-  );
-};
-
-const ProfilePage = () => {
-  return (
-    <SidebarProvider>
-      <ProfilePageContent />
-    </SidebarProvider>
   );
 };
 

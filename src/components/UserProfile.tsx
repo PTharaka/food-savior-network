@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,13 +52,24 @@ const UserProfile = ({ isModal, onClose }: UserProfileProps) => {
 
   return (
     <div className={`
-      ${isModal ? "p-3 sm:p-4" : "rounded-lg border bg-card text-card-foreground shadow-sm p-6"} 
-      w-full max-w-none
+      ${isModal ? "p-3 sm:p-4" : "glass-panel p-4 sm:p-6 lg:p-8 w-full max-w-5xl mx-auto"} 
+      bg-white rounded-lg shadow-sm border border-wastewise-light-gray/20
     `}>
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 sm:mb-6">
         <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-bold text-wastewise-dark-green">
+          {onClose && !isMobile && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose} 
+              className="mr-2"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back to Dashboard
+            </Button>
+          )}
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-wastewise-dark-green">
             Business Profile
           </h2>
         </div>
@@ -90,14 +102,14 @@ const UserProfile = ({ isModal, onClose }: UserProfileProps) => {
         </div>
       </div>
 
-      {/* Profile Avatar & Info */}
+      {/* Profile Avatar & Info - Only show on larger screens when not modal */}
       {!isModal && (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 p-4 bg-wastewise-soft-green/30 rounded-lg">
-          <div className="bg-wastewise-green/20 h-16 w-16 rounded-full flex items-center justify-center text-2xl font-bold text-wastewise-green mx-auto sm:mx-0">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4 sm:mb-6 p-4 bg-wastewise-soft-green/30 rounded-lg">
+          <div className="bg-wastewise-green/20 h-12 w-12 sm:h-16 sm:w-16 rounded-full flex items-center justify-center text-lg sm:text-2xl font-bold text-wastewise-green mx-auto sm:mx-0">
             {formData.businessName.charAt(0)}
           </div>
           <div className="text-center sm:text-left">
-            <h3 className="text-xl font-semibold">{formData.businessName}</h3>
+            <h3 className="text-lg sm:text-xl font-semibold">{formData.businessName}</h3>
             <div className="flex gap-2 mt-1 justify-center sm:justify-start flex-wrap">
               <Badge variant="secondary" className="text-xs">Restaurant</Badge>
               <Badge variant="outline" className="text-xs">Premium Plan</Badge>
@@ -106,13 +118,16 @@ const UserProfile = ({ isModal, onClose }: UserProfileProps) => {
         </div>
       )}
 
-      <Separator className="my-6" />
+      <Separator className="my-4" />
 
       {/* Form Section */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className={`
+        ${isModal ? "max-h-[60vh] overflow-y-auto pr-2" : ""} 
+        space-y-4 sm:space-y-6
+      `}>
         {/* Basic Information */}
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
             <div className="space-y-2">
               <Label htmlFor="businessName" className="text-sm font-medium">Business Name</Label>
               <Input
@@ -167,11 +182,11 @@ const UserProfile = ({ isModal, onClose }: UserProfileProps) => {
           </div>
         </div>
 
-        <Separator className="my-6" />
+        <Separator className="my-4 sm:my-6" />
 
         {/* Notification Preferences */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Notification Preferences</h3>
+          <h3 className="text-base sm:text-lg font-semibold">Notification Preferences</h3>
           <div className="space-y-4">
             {[
               {
@@ -193,12 +208,12 @@ const UserProfile = ({ isModal, onClose }: UserProfileProps) => {
                 checked: formData.notificationsApp
               }
             ].map((notification) => (
-              <div key={notification.id} className="flex items-start justify-between gap-4 p-4 bg-gray-50 rounded-lg">
+              <div key={notification.id} className="flex items-start justify-between gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
                 <div className="flex-1 min-w-0">
-                  <Label className="text-base font-medium cursor-pointer" htmlFor={notification.id}>
+                  <Label className="text-sm sm:text-base font-medium cursor-pointer" htmlFor={notification.id}>
                     {notification.title}
                   </Label>
-                  <p className="text-sm text-wastewise-gray mt-1 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-wastewise-gray mt-1 leading-relaxed">
                     {notification.description}
                   </p>
                 </div>
@@ -216,10 +231,10 @@ const UserProfile = ({ isModal, onClose }: UserProfileProps) => {
 
         {/* Save Button */}
         {isEditing && (
-          <div className="flex justify-end pt-6 border-t">
+          <div className="flex justify-end pt-4 sm:pt-6 border-t">
             <Button 
               type="submit" 
-              className="bg-wastewise-green hover:bg-wastewise-dark-green text-white px-6 py-2"
+              className="bg-wastewise-green hover:bg-wastewise-dark-green text-white px-6 py-2 text-sm sm:text-base"
             >
               Save Changes
             </Button>
