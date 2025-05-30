@@ -9,8 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   SidebarProvider, 
   SidebarInset, 
-  SidebarTrigger,
-  useSidebar 
+  SidebarTrigger 
 } from "@/components/ui/sidebar";
 
 const ProfilePageContent = () => {
@@ -18,7 +17,7 @@ const ProfilePageContent = () => {
   const isMobile = useIsMobile();
   
   return (
-    <div className="min-h-screen flex w-full bg-wastewise-cream/50">
+    <div className="min-h-screen flex w-full">
       {/* Sidebar */}
       <DashboardSidebar 
         onProfileClick={() => {}}
@@ -29,11 +28,11 @@ const ProfilePageContent = () => {
       />
       
       {/* Main Content */}
-      <SidebarInset>
+      <SidebarInset className="flex-1">
         {/* Header */}
-        <header className="bg-white shadow-sm py-3 px-4 sm:py-4 sm:px-6 border-b">
-          <div className="flex items-center gap-3">
-            <SidebarTrigger />
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
             
             <Link to="/dashboard">
               <Button variant="ghost" className="gap-2 text-sm sm:text-base">
@@ -43,6 +42,8 @@ const ProfilePageContent = () => {
               </Button>
             </Link>
             
+            <div className="h-6 w-px bg-border mx-2" />
+            
             <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-wastewise-dark-gray">
               Account Settings
             </h1>
@@ -50,11 +51,11 @@ const ProfilePageContent = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <div className="mx-auto grid w-full max-w-6xl gap-2">
             <UserProfile onClose={() => navigate('/dashboard')} />
           </div>
-        </main>
+        </div>
       </SidebarInset>
     </div>
   );
