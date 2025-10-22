@@ -1,6 +1,7 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
+import type { Session } from '@supabase/supabase-js';
 
 export type SubscriptionTier = 'free' | 'starter' | 'pro' | 'enterprise';
 
@@ -25,164 +26,140 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Initialize auth state and set up listener
   useEffect(() => {
-    // Check if user data exists in localStorage
-    const storedUser = localStorage.getItem('wastewise_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    // Set up auth state listener first
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+        setSession(session);
+        
+        if (session?.user) {
+          // Fetch user profile from profiles table
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .maybeSingle();
+
+          if (profile) {
+            setUser({
+              id: profile.id,
+              email: profile.email || session.user.email || '',
+              businessName: profile.business_name || '',
+              businessType: profile.business_type || '',
+              subscriptionTier: (profile.subscription_tier as SubscriptionTier) || 'free',
+            });
+          }
+        } else {
+          setUser(null);
+        }
+        setIsLoading(false);
+      }
+    );
+
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .maybeSingle()
+          .then(({ data: profile }) => {
+            if (profile) {
+              setUser({
+                id: profile.id,
+                email: profile.email || session.user.email || '',
+                businessName: profile.business_name || '',
+                businessType: profile.business_type || '',
+                subscriptionTier: (profile.subscription_tier as SubscriptionTier) || 'free',
+              });
+            }
+            setIsLoading(false);
+          });
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Simulate authentication API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Check for demo credentials
-      if (email === 'demo@wastewise.com' && password === 'demo123') {
-        const demoUser = {
-          id: 'user_demo',
-          email: 'demo@wastewise.com',
-          businessName: 'Demo Restaurant',
-          businessType: 'restaurant',
-          subscriptionTier: 'free' as SubscriptionTier
-        };
-        setUser(demoUser);
-        localStorage.setItem('wastewise_user', JSON.stringify(demoUser));
-        toast.success("Logged in as Free Tier Demo User");
-        return;
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        toast.success("Welcome back!");
       }
-      
-      // Check for free tier demo
-      if (email === 'free@wastewise.com' && password === 'demo123') {
-        const freeUser = {
-          id: 'user_free',
-          email: 'free@wastewise.com',
-          businessName: 'Free Restaurant',
-          businessType: 'restaurant',
-          subscriptionTier: 'free' as SubscriptionTier
-        };
-        setUser(freeUser);
-        localStorage.setItem('wastewise_user', JSON.stringify(freeUser));
-        toast.success("Logged in as Free Tier Demo User");
-        return;
-      }
-      
-      // Check for starter tier demo
-      if (email === 'starter@wastewise.com' && password === 'demo123') {
-        const starterUser = {
-          id: 'user_starter',
-          email: 'starter@wastewise.com',
-          businessName: 'Starter Restaurant',
-          businessType: 'restaurant',
-          subscriptionTier: 'starter' as SubscriptionTier
-        };
-        setUser(starterUser);
-        localStorage.setItem('wastewise_user', JSON.stringify(starterUser));
-        toast.success("Logged in as Starter Tier Demo User");
-        return;
-      }
-      
-      // Check for pro tier demo
-      if (email === 'pro@wastewise.com' && password === 'demo123') {
-        const proUser = {
-          id: 'user_pro',
-          email: 'pro@wastewise.com',
-          businessName: 'Pro Restaurant',
-          businessType: 'restaurant',
-          subscriptionTier: 'pro' as SubscriptionTier
-        };
-        setUser(proUser);
-        localStorage.setItem('wastewise_user', JSON.stringify(proUser));
-        toast.success("Logged in as Pro Tier Demo User");
-        return;
-      }
-      
-      // Check for enterprise tier demo
-      if (email === 'enterprise@wastewise.com' && password === 'demo123') {
-        const enterpriseUser = {
-          id: 'user_enterprise',
-          email: 'enterprise@wastewise.com',
-          businessName: 'Enterprise Corp',
-          businessType: 'food_distributor',
-          subscriptionTier: 'enterprise' as SubscriptionTier
-        };
-        setUser(enterpriseUser);
-        localStorage.setItem('wastewise_user', JSON.stringify(enterpriseUser));
-        toast.success("Logged in as Enterprise Tier Demo User");
-        return;
-      }
-      
-      // Check for trial demo
-      if (email === 'trial@wastewise.com' && password === 'demo123') {
-        const trialUser = {
-          id: 'user_trial',
-          email: 'trial@wastewise.com',
-          businessName: 'Trial Restaurant',
-          businessType: 'restaurant',
-          subscriptionTier: 'pro' as SubscriptionTier
-        };
-        setUser(trialUser);
-        localStorage.setItem('wastewise_user', JSON.stringify(trialUser));
-        toast.success("Logged in as Trial User (Pro features)");
-        return;
-      }
-      
-      // In a real app, validate credentials with backend
-      // For demo, any email with password longer than 6 chars works
-      if (password.length >= 6) {
-        const newUser = {
-          id: `user_${Date.now()}`,
-          email,
-          businessName: 'Demo Business',
-          subscriptionTier: 'free' as SubscriptionTier
-        };
-        setUser(newUser);
-        localStorage.setItem('wastewise_user', JSON.stringify(newUser));
-        toast.success("Logged in successfully");
-      } else {
-        throw new Error('Invalid credentials');
-      }
-    } catch (error) {
-      toast.error("Failed to login. Please check your credentials.");
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error.message || 'Failed to login. Please check your credentials.');
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signup = async (email: string, password: string, businessName: string, businessType: string, subscriptionTier: string = 'free') => {
+  const signup = async (
+    email: string,
+    password: string,
+    businessName: string,
+    businessType: string,
+    subscriptionTier: string = 'free'
+  ) => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const redirectUrl = `${window.location.origin}/`;
       
-      const tier = (subscriptionTier as SubscriptionTier) || 'free';
-      
-      const newUser = {
-        id: `user_${Date.now()}`,
+      const { data, error } = await supabase.auth.signUp({
         email,
-        businessName,
-        businessType,
-        subscriptionTier: tier
-      };
-      setUser(newUser);
-      localStorage.setItem('wastewise_user', JSON.stringify(newUser));
-      toast.success("Account created successfully!");
-    } catch (error) {
-      toast.error("Failed to create account. Please try again.");
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            business_name: businessName,
+            business_type: businessType,
+            subscription_tier: subscriptionTier,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        toast.success("Account created successfully! Welcome to EcoTrace!");
+      }
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      toast.error(error.message || 'Failed to create account. Please try again.');
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('wastewise_user');
-    toast.success("Logged out successfully");
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
+      toast.success("Logged out successfully");
+    } catch (error: any) {
+      console.error('Logout error:', error);
+      toast.error("Failed to logout. Please try again.");
+    }
   };
 
   return (
