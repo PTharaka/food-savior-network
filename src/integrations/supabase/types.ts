@@ -14,33 +14,207 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_insights: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          insight_type: string
+          recommendations: Json | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          insight_type: string
+          recommendations?: Json | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          insight_type?: string
+          recommendations?: Json | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      donations: {
+        Row: {
+          created_at: string | null
+          donation_date: string
+          estimated_value: number | null
+          id: string
+          item_name: string
+          notes: string | null
+          quantity: number
+          recipient_name: string
+          recipient_type: string
+          status: string | null
+          tax_deductible: boolean | null
+          unit: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          donation_date?: string
+          estimated_value?: number | null
+          id?: string
+          item_name: string
+          notes?: string | null
+          quantity: number
+          recipient_name: string
+          recipient_type: string
+          status?: string | null
+          tax_deductible?: boolean | null
+          unit: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          donation_date?: string
+          estimated_value?: number | null
+          id?: string
+          item_name?: string
+          notes?: string | null
+          quantity?: number
+          recipient_name?: string
+          recipient_type?: string
+          status?: string | null
+          tax_deductible?: boolean | null
+          unit?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          address: string | null
           business_name: string | null
           business_type: string | null
+          company_size: string | null
           created_at: string | null
           email: string | null
           id: string
+          industry: string | null
+          phone: string | null
           subscription_tier: string | null
           updated_at: string | null
         }
         Insert: {
+          address?: string | null
           business_name?: string | null
           business_type?: string | null
+          company_size?: string | null
           created_at?: string | null
           email?: string | null
           id: string
+          industry?: string | null
+          phone?: string | null
           subscription_tier?: string | null
           updated_at?: string | null
         }
         Update: {
+          address?: string | null
           business_name?: string | null
           business_type?: string | null
+          company_size?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
+          industry?: string | null
+          phone?: string | null
           subscription_tier?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      social_posts: {
+        Row: {
+          content: string
+          created_at: string | null
+          engagement_metrics: Json | null
+          id: string
+          platform: string
+          scheduled_date: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          engagement_metrics?: Json | null
+          id?: string
+          platform: string
+          scheduled_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          engagement_metrics?: Json | null
+          id?: string
+          platform?: string
+          scheduled_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      waste_entries: {
+        Row: {
+          category: string
+          cost: number | null
+          created_at: string | null
+          date: string
+          id: string
+          item_name: string
+          notes: string | null
+          quantity: number
+          reason: string | null
+          unit: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          category: string
+          cost?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          item_name: string
+          notes?: string | null
+          quantity: number
+          reason?: string | null
+          unit: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string
+          cost?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          item_name?: string
+          notes?: string | null
+          quantity?: number
+          reason?: string | null
+          unit?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }

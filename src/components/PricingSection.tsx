@@ -4,13 +4,15 @@ import { Check, HelpCircle } from 'lucide-react';
 
 const plans = [
   {
-    name: "Freemium",
+    name: "Free",
     price: "Free",
     description: "Perfect for small businesses just getting started with waste tracking.",
     features: [
-      "Basic waste tracking (50 logs/month)",
-      "Simple analytics dashboard",
-      "Email support"
+      "Up to 50 waste entries/month",
+      "Basic analytics dashboard",
+      "3 donation alerts/month",
+      "Email support",
+      "Community forum access"
     ],
     cta: "Get Started",
     ctaColor: "btn-secondary",
@@ -22,10 +24,11 @@ const plans = [
     period: "/month",
     description: "Ideal for growing businesses ready to optimize their waste management.",
     features: [
-      "Advanced analytics dashboard",
-      "3 POS integrations",
+      "Up to 500 waste entries/month",
+      "Advanced analytics & insights",
+      "3 POS system integrations",
       "10 donation alerts/month",
-      "Basic tax report generation",
+      "AI-powered recommendations",
       "Email & chat support"
     ],
     cta: "Subscribe Now",
@@ -38,14 +41,14 @@ const plans = [
     period: "/month",
     description: "For established businesses seeking comprehensive waste management.",
     features: [
-      "Unlimited waste tracking",
+      "Up to 5,000 waste entries/month",
       "Unlimited donation alerts",
-      "Full tax automation",
-      "API access",
-      "Custom reporting",
+      "10 POS system integrations",
+      "Full tax compliance tools",
+      "API access for custom integrations",
       "Priority support"
     ],
-    cta: "Contact Sales",
+    cta: "Start Pro Trial",
     ctaColor: "btn-secondary",
     highlight: false
   },
@@ -54,12 +57,12 @@ const plans = [
     price: "Custom",
     description: "Tailored solutions for large operations with complex needs.",
     features: [
+      "Unlimited waste entries",
+      "Unlimited POS integrations",
       "White-label reporting",
       "Dedicated account manager",
-      "Custom integrations",
-      "Advanced analytics",
-      "Multi-location support",
-      "24/7 support"
+      "Custom integrations & workflows",
+      "24/7 premium support"
     ],
     cta: "Contact Sales",
     ctaColor: "btn-secondary",
@@ -112,31 +115,31 @@ const PricingSection: React.FC = () => {
             Choose the plan that best fits your needs. All plans include access to our core platform.
           </p>
 
-          <div className="flex items-center justify-center mt-8">
+          <div className="flex items-center justify-center mt-8 gap-0">
             <button
               onClick={() => setIsAnnual(false)}
-              className={`px-4 py-2 rounded-l-full ${
+              className={`px-6 py-2.5 text-sm font-medium rounded-l-full transition-all duration-300 ${
                 !isAnnual
-                  ? 'bg-wastewise-green text-white'
-                  : 'bg-wastewise-light-gray/50 text-wastewise-dark-gray'
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setIsAnnual(true)}
-              className={`px-4 py-2 rounded-r-full ${
+              className={`px-6 py-2.5 text-sm font-medium rounded-r-full transition-all duration-300 ${
                 isAnnual
-                  ? 'bg-wastewise-green text-white'
-                  : 'bg-wastewise-light-gray/50 text-wastewise-dark-gray'
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
-              Annual (Save 20%)
+              Annual <span className="hidden sm:inline">(Save 20%)</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {plans.map((plan, index) => {
             // Calculate annual price with 20% discount if applicable
             const displayPrice = plan.price === "Custom" || plan.price === "Free" 
@@ -151,40 +154,40 @@ const PricingSection: React.FC = () => {
               <div
                 key={index}
                 ref={(el) => (planRefs.current[index] = el)}
-                className={`glass-panel p-6 ${
+                className={`glass-panel p-6 flex flex-col h-full ${
                   plan.highlight
-                    ? 'border-2 border-wastewise-green relative'
-                    : 'border border-wastewise-light-gray/50'
-                } card-hover opacity-0`}
+                    ? 'border-2 border-primary ring-2 ring-primary/20 shadow-xl scale-105 lg:scale-110 relative'
+                    : 'border border-border'
+                } card-hover opacity-0 transition-all duration-300`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
                 {plan.highlight && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-wastewise-green text-white text-xs font-bold px-3 py-1 rounded-full">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
                     Most Popular
                   </div>
                 )}
                 <div className="text-center mb-6">
-                  <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                  <div className="flex items-end justify-center mb-2">
-                    <span className="text-3xl font-bold">{displayPrice}</span>
-                    {displayPeriod && <span className="text-wastewise-gray">{displayPeriod}</span>}
+                  <h3 className="text-xl font-bold mb-2 text-foreground">{plan.name}</h3>
+                  <div className="flex items-end justify-center mb-2 gap-1">
+                    <span className="text-3xl md:text-4xl font-bold text-foreground">{displayPrice}</span>
+                    {displayPeriod && <span className="text-muted-foreground text-sm mb-1">{displayPeriod}</span>}
                   </div>
-                  <p className="text-wastewise-gray text-sm">{plan.description}</p>
+                  <p className="text-muted-foreground text-sm px-2">{plan.description}</p>
                 </div>
 
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-3 mb-8 flex-grow">
                   {plan.features.map((feature, fidx) => (
                     <li key={fidx} className="flex items-start">
-                      <Check className="h-5 w-5 text-wastewise-green flex-shrink-0 mt-0.5" />
-                      <span className="ml-2 text-sm">{feature}</span>
+                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <span className="ml-3 text-sm text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <div className="mt-auto">
                   <a
-                    href="#contact"
-                    className={`w-full flex items-center justify-center ${
+                    href="/signup"
+                    className={`w-full flex items-center justify-center text-center ${
                       plan.ctaColor === 'btn-primary' ? 'btn-primary' : 'btn-secondary'
                     }`}
                   >
