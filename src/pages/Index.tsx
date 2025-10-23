@@ -1,5 +1,5 @@
 
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -7,8 +7,6 @@ import HowItWorksSection from '@/components/HowItWorksSection';
 import PricingSection from '@/components/PricingSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
-
-const InteractiveAnalyticsDemo = lazy(() => import('@/components/InteractiveAnalyticsDemo'));
 
 const Index = () => {
   return (
@@ -18,10 +16,6 @@ const Index = () => {
       <HeroSection />
       
       <FeaturesSection />
-      
-      <Suspense fallback={<div className="h-96 flex items-center justify-center">Loading...</div>}>
-        <InteractiveAnalyticsDemo />
-      </Suspense>
       
       <HowItWorksSection />
       

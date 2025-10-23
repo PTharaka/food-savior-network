@@ -99,6 +99,7 @@ const SignUp = () => {
     billingCycle: 'monthly'
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [currentTab, setCurrentTab] = useState('account');
   const navigate = useNavigate();
   const { signup } = useAuth();
 
@@ -115,6 +116,22 @@ const SignUp = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const validatePassword = (password: string): { valid: boolean; message?: string } => {
+    if (password.length < 8) {
+      return { valid: false, message: 'Password must be at least 8 characters long' };
+    }
+    if (!/[A-Z]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one uppercase letter' };
+    }
+    if (!/[a-z]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one lowercase letter' };
+    }
+    if (!/[0-9]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one number' };
+    }
+    return { valid: true };
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -123,8 +140,9 @@ const SignUp = () => {
       return;
     }
     
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.valid) {
+      toast.error(passwordValidation.message || 'Invalid password');
       return;
     }
     
@@ -197,7 +215,7 @@ const SignUp = () => {
         </div>
         
         <div className="glass-panel max-w-5xl mx-auto p-8 rounded-xl">
-          <Tabs defaultValue="account" className="w-full">
+          <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="account">Account Details</TabsTrigger>
               <TabsTrigger value="plan">Select Plan</TabsTrigger>
@@ -290,6 +308,9 @@ const SignUp = () => {
                         required
                         className="w-full"
                       />
+                      <p className="text-xs text-wastewise-gray">
+                        Min 8 characters, with uppercase, lowercase, and number
+                      </p>
                     </div>
                     
                     <div className="space-y-2">
@@ -321,22 +342,19 @@ const SignUp = () => {
                           return;
                         }
                         
+                        const passwordValidation = validatePassword(formData.password);
+                        if (!passwordValidation.valid) {
+                          toast.error(passwordValidation.message || 'Invalid password');
+                          return;
+                        }
+                        
                         if (formData.password !== formData.confirmPassword) {
                           toast.error('Passwords do not match');
                           return;
                         }
                         
-                        if (formData.password.length < 6) {
-                          toast.error('Password must be at least 6 characters');
-                          return;
-                        }
-                        
                         // Switch to plan tab
-                        const tabsList = document.querySelector('[role="tablist"]');
-                        const planTrigger = tabsList?.querySelector('[value="plan"]') as HTMLElement;
-                        if (planTrigger) {
-                          planTrigger.click();
-                        }
+                        setCurrentTab('plan');
                       }}
                     >
                       Continue to Plans <ArrowRight className="ml-2 h-4 w-4" />
