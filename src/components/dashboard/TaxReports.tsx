@@ -13,11 +13,15 @@ import TaxComplianceService from '@/services/TaxComplianceService';
 interface TaxDocument {
   id: string;
   name: string;
-  type: 'donation_summary' | 'form_8283' | 'receipt' | 'waste_report';
+  type: 'donation_summary' | 'form_8283' | 'receipt' | 'waste_report' | 'irs_8283' | 'eu_vat' | 'annual_summary';
   period: string;
   createdDate: string;
   downloadUrl: string;
   size: string;
+  status?: string;
+  tax_year?: number;
+  total_donation_value?: number;
+  total_deduction?: number;
 }
 
 const TaxReports: React.FC = () => {

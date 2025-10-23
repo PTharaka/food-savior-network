@@ -1,5 +1,6 @@
 
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DonationRecord {
   id: string;
@@ -15,11 +16,15 @@ interface DonationRecord {
 interface TaxDocument {
   id: string;
   name: string;
-  type: 'donation_summary' | 'form_8283' | 'receipt' | 'waste_report';
+  type: 'donation_summary' | 'form_8283' | 'receipt' | 'waste_report' | 'irs_8283' | 'eu_vat' | 'annual_summary';
   period: string;
   createdDate: string;
   downloadUrl: string;
   size: string;
+  status?: string;
+  tax_year?: number;
+  total_donation_value?: number;
+  total_deduction?: number;
 }
 
 class TaxComplianceService {
@@ -70,53 +75,78 @@ class TaxComplianceService {
     return this.documents;
   }
 
-  generateDonationSummary(donationRecords: DonationRecord[], period: string): Promise<TaxDocument> {
-    // Mock implementation - would actually generate a PDF document
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const completedDonations = donationRecords.filter(d => d.status === 'completed');
-        
-        // Calculate total donation value
-        const totalValue = completedDonations.reduce((sum, d) => sum + (d.estimatedValue || 0), 0);
-        
-        const newDocument: TaxDocument = {
-          id: `doc_${Date.now()}`,
-          name: `${period} Donation Summary`,
-          type: 'donation_summary',
-          period,
-          createdDate: new Date().toISOString().split('T')[0],
-          downloadUrl: '#',
-          size: `${Math.floor(Math.random() * 900 + 100)} KB`
-        };
-        
-        this.documents.push(newDocument);
-        console.log('Generated donation summary', newDocument, 'with total value', totalValue);
-        toast.success('Donation summary generated');
-        resolve(newDocument);
-      }, 2000);
-    });
+  async generateDonationSummary(donationRecords: DonationRecord[], period: string): Promise<TaxDocument> {
+    try {
+      const taxYear = new Date().getFullYear();
+      
+      const { data, error } = await supabase.functions.invoke('generate-tax-document', {
+        body: { 
+          documentType: 'donation_summary',
+          taxYear,
+          period
+        }
+      });
+
+      if (error) throw error;
+
+      const newDocument: TaxDocument = {
+        id: data.document.id,
+        name: `${period} Donation Summary`,
+        type: 'donation_summary',
+        period,
+        createdDate: new Date(data.document.created_at).toISOString().split('T')[0],
+        downloadUrl: data.document.pdf_url || '#',
+        size: '850 KB',
+        status: data.document.status,
+        tax_year: data.document.tax_year,
+        total_donation_value: data.document.total_donation_value,
+        total_deduction: data.document.total_deduction
+      };
+      
+      console.log('Generated donation summary', newDocument);
+      toast.success('Donation summary generated');
+      return newDocument;
+    } catch (error: any) {
+      console.error('Failed to generate donation summary:', error);
+      toast.error('Failed to generate donation summary');
+      throw error;
+    }
   }
 
-  generateForm8283(donationRecords: DonationRecord[], year: string): Promise<TaxDocument> {
-    // Mock implementation - would actually generate a Form 8283 document
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newDocument: TaxDocument = {
-          id: `doc_${Date.now()}`,
-          name: `IRS Form 8283 (${year})`,
-          type: 'form_8283',
-          period: year,
-          createdDate: new Date().toISOString().split('T')[0],
-          downloadUrl: '#',
-          size: `${Math.floor(Math.random() * 500 + 100)} KB`
-        };
-        
-        this.documents.push(newDocument);
-        console.log('Generated IRS Form 8283', newDocument);
-        toast.success('IRS Form 8283 generated');
-        resolve(newDocument);
-      }, 2500);
-    });
+  async generateForm8283(donationRecords: DonationRecord[], year: string): Promise<TaxDocument> {
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-tax-document', {
+        body: { 
+          documentType: 'irs_8283',
+          taxYear: parseInt(year),
+          period: year
+        }
+      });
+
+      if (error) throw error;
+
+      const newDocument: TaxDocument = {
+        id: data.document.id,
+        name: `IRS Form 8283 (${year})`,
+        type: 'form_8283',
+        period: year,
+        createdDate: new Date(data.document.created_at).toISOString().split('T')[0],
+        downloadUrl: data.document.pdf_url || '#',
+        size: '420 KB',
+        status: data.document.status,
+        tax_year: data.document.tax_year,
+        total_donation_value: data.document.total_donation_value,
+        total_deduction: data.document.total_deduction
+      };
+      
+      console.log('Generated IRS Form 8283', newDocument);
+      toast.success('IRS Form 8283 generated');
+      return newDocument;
+    } catch (error: any) {
+      console.error('Failed to generate Form 8283:', error);
+      toast.error('Failed to generate Form 8283');
+      throw error;
+    }
   }
 
   generateDonationReceipt(donationId: string): Promise<TaxDocument> {

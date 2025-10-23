@@ -1,5 +1,6 @@
 
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 type Coordinates = {
   latitude: number;
@@ -18,15 +19,15 @@ type LocationData = {
 interface Organization {
   id: string;
   name: string;
-  type: 'food_bank' | 'composter' | 'shelter' | 'community_kitchen';
+  type: 'food_bank' | 'shelter' | 'community_kitchen' | 'composting_facility' | 'animal_shelter';
   coordinates: Coordinates;
   address: string;
-  distance?: number; // in miles
-  contactPerson: string;
   phone: string;
   email: string;
+  contactPerson?: string;
   acceptedItems: string[];
   availability: string[];
+  distance?: number;
 }
 
 class GeoLocationService {
@@ -63,7 +64,7 @@ class GeoLocationService {
     {
       id: 'org_3',
       name: 'Green Composting',
-      type: 'composter',
+      type: 'composting_facility',
       coordinates: { latitude: 37.7751, longitude: -122.4193 },
       address: '789 Howard St, San Francisco, CA 94103',
       contactPerson: 'Alex Johnson',
@@ -158,29 +159,64 @@ class GeoLocationService {
   }
 
   public async getNearbyOrganizations(maxDistance: number = 10): Promise<Organization[]> {
-    const currentLocation = await this.getCurrentLocation();
-    if (!currentLocation) {
-      return [];
+    try {
+      const currentLocation = await this.getCurrentLocation();
+      if (!currentLocation) {
+        return this.demoOrganizations;
+      }
+
+      // Get all verified charities from database
+      const { data: charities, error } = await supabase
+        .from('charity_organizations')
+        .select('*')
+        .eq('verified', true);
+
+      if (error || !charities || charities.length === 0) {
+        console.log('Using demo organizations');
+        // Calculate distance for demo orgs
+        const organizationsWithDistance = this.demoOrganizations.map(org => {
+          const distance = this.calculateDistance(currentLocation, org.coordinates);
+          return { ...org, distance };
+        });
+        const filtered = organizationsWithDistance
+          .filter(org => (org.distance || 0) <= maxDistance)
+          .sort((a, b) => (a.distance || 0) - (b.distance || 0));
+        this.cachedOrganizations = filtered;
+        return filtered;
+      }
+
+      // Convert DB charities to Organization format
+      const orgsWithDistance = charities.map(org => ({
+        id: org.id,
+        name: org.name,
+        type: org.type as Organization['type'],
+        coordinates: {
+          latitude: Number(org.latitude) || 0,
+          longitude: Number(org.longitude) || 0
+        },
+        address: org.address,
+        phone: org.phone || '',
+        email: org.email || '',
+        contactPerson: org.contact_person || '',
+        acceptedItems: org.accepts_categories || [],
+        availability: Object.entries(org.operating_hours || {}).map(([day, hours]) => `${day}: ${hours}`),
+        distance: this.calculateDistance(currentLocation, {
+          latitude: Number(org.latitude) || 0,
+          longitude: Number(org.longitude) || 0
+        })
+      }));
+
+      // Filter by distance and sort
+      const nearby = orgsWithDistance
+        .filter(org => org.distance! <= maxDistance)
+        .sort((a, b) => a.distance! - b.distance!);
+
+      this.cachedOrganizations = nearby;
+      return nearby;
+    } catch (error) {
+      console.error('Error fetching nearby organizations:', error);
+      return this.demoOrganizations;
     }
-
-    // If we have cached results, return them
-    if (this.cachedOrganizations.length > 0) {
-      return this.cachedOrganizations;
-    }
-
-    // Calculate distance for each organization
-    const organizationsWithDistance = this.demoOrganizations.map(org => {
-      const distance = this.calculateDistance(currentLocation, org.coordinates);
-      return { ...org, distance };
-    });
-
-    // Filter by distance and sort by proximity
-    const nearbyOrganizations = organizationsWithDistance
-      .filter(org => (org.distance || 0) <= maxDistance)
-      .sort((a, b) => (a.distance || 0) - (b.distance || 0));
-
-    this.cachedOrganizations = nearbyOrganizations;
-    return nearbyOrganizations;
   }
 
   public async getOrganizationsByType(type: Organization['type'], maxDistance: number = 10): Promise<Organization[]> {

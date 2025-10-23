@@ -44,7 +44,11 @@ const WasteTracker: React.FC = () => {
 
   useEffect(() => {
     // Check if POS is connected
-    setPosConnected(posService.isConnectedToPOS());
+    const checkConnection = async () => {
+      const connected = await posService.isConnectedToPOS();
+      setPosConnected(connected);
+    };
+    checkConnection();
     
     // Generate predictions for demo purposes
     runPredictions();
@@ -172,8 +176,17 @@ const WasteTracker: React.FC = () => {
     
     setLoading(true);
     try {
+      // Get first active connection
+      const connections = await posService.getConnections();
+      const activeConnection = connections.find(conn => conn.status === 'active');
+      
+      if (!activeConnection) {
+        toast.error('No active POS connection found');
+        return;
+      }
+      
       // Import data from POS
-      await posService.syncInventory();
+      await posService.syncInventory(activeConnection.id);
       toast.success('Data imported successfully from POS');
     } catch (error) {
       console.error('Error importing data:', error);
