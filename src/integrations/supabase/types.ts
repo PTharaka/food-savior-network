@@ -44,6 +44,173 @@ export type Database = {
         }
         Relationships: []
       }
+      charity_organizations: {
+        Row: {
+          accepts_categories: string[] | null
+          address: string
+          capacity_notes: string | null
+          contact_person: string | null
+          created_at: string
+          email: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          name: string
+          operating_hours: Json | null
+          phone: string | null
+          type: string
+          updated_at: string
+          verified: boolean | null
+        }
+        Insert: {
+          accepts_categories?: string[] | null
+          address: string
+          capacity_notes?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          operating_hours?: Json | null
+          phone?: string | null
+          type: string
+          updated_at?: string
+          verified?: boolean | null
+        }
+        Update: {
+          accepts_categories?: string[] | null
+          address?: string
+          capacity_notes?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          operating_hours?: Json | null
+          phone?: string | null
+          type?: string
+          updated_at?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      donation_requests: {
+        Row: {
+          charity_id: string
+          completed_at: string | null
+          created_at: string
+          estimated_value: number | null
+          expiry_date: string | null
+          id: string
+          item_name: string
+          notes: string | null
+          notification_sent: boolean | null
+          pickup_scheduled_at: string | null
+          quantity: number
+          status: string
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          charity_id: string
+          completed_at?: string | null
+          created_at?: string
+          estimated_value?: number | null
+          expiry_date?: string | null
+          id?: string
+          item_name: string
+          notes?: string | null
+          notification_sent?: boolean | null
+          pickup_scheduled_at?: string | null
+          quantity: number
+          status?: string
+          unit: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          charity_id?: string
+          completed_at?: string | null
+          created_at?: string
+          estimated_value?: number | null
+          expiry_date?: string | null
+          id?: string
+          item_name?: string
+          notes?: string | null
+          notification_sent?: boolean | null
+          pickup_scheduled_at?: string | null
+          quantity?: number
+          status?: string
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donation_requests_charity_id_fkey"
+            columns: ["charity_id"]
+            isOneToOne: false
+            referencedRelation: "charity_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      donation_tax_details: {
+        Row: {
+          appraisal_required: boolean | null
+          charity_ein: string | null
+          created_at: string
+          deduction_amount: number
+          donation_id: string
+          fair_market_value: number
+          id: string
+          receipt_number: string | null
+          tax_document_id: string | null
+        }
+        Insert: {
+          appraisal_required?: boolean | null
+          charity_ein?: string | null
+          created_at?: string
+          deduction_amount: number
+          donation_id: string
+          fair_market_value: number
+          id?: string
+          receipt_number?: string | null
+          tax_document_id?: string | null
+        }
+        Update: {
+          appraisal_required?: boolean | null
+          charity_ein?: string | null
+          created_at?: string
+          deduction_amount?: number
+          donation_id?: string
+          fair_market_value?: number
+          id?: string
+          receipt_number?: string | null
+          tax_document_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donation_tax_details_donation_id_fkey"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "donation_tax_details_tax_document_id_fkey"
+            columns: ["tax_document_id"]
+            isOneToOne: false
+            referencedRelation: "tax_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       donations: {
         Row: {
           created_at: string | null
@@ -94,6 +261,77 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      pos_connections: {
+        Row: {
+          api_key_encrypted: string
+          created_at: string
+          id: string
+          last_synced_at: string | null
+          provider: string
+          status: string
+          store_id: string | null
+          sync_frequency: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key_encrypted: string
+          created_at?: string
+          id?: string
+          last_synced_at?: string | null
+          provider: string
+          status?: string
+          store_id?: string | null
+          sync_frequency?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key_encrypted?: string
+          created_at?: string
+          id?: string
+          last_synced_at?: string | null
+          provider?: string
+          status?: string
+          store_id?: string | null
+          sync_frequency?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pos_sync_logs: {
+        Row: {
+          connection_id: string
+          errors: Json | null
+          id: string
+          items_synced: number
+          synced_at: string
+        }
+        Insert: {
+          connection_id: string
+          errors?: Json | null
+          id?: string
+          items_synced?: number
+          synced_at?: string
+        }
+        Update: {
+          connection_id?: string
+          errors?: Json | null
+          id?: string
+          items_synced?: number
+          synced_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pos_sync_logs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "pos_connections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -169,6 +407,51 @@ export type Database = {
           scheduled_date?: string | null
           status?: string | null
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tax_documents: {
+        Row: {
+          created_at: string
+          document_type: string
+          generated_at: string | null
+          id: string
+          pdf_url: string | null
+          period: string | null
+          status: string
+          tax_year: number
+          total_deduction: number | null
+          total_donation_value: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_type: string
+          generated_at?: string | null
+          id?: string
+          pdf_url?: string | null
+          period?: string | null
+          status?: string
+          tax_year: number
+          total_deduction?: number | null
+          total_donation_value?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_type?: string
+          generated_at?: string | null
+          id?: string
+          pdf_url?: string | null
+          period?: string | null
+          status?: string
+          tax_year?: number
+          total_deduction?: number | null
+          total_donation_value?: number | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
