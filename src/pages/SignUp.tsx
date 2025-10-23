@@ -118,13 +118,18 @@ const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+    if (!formData.businessName || !formData.email || !formData.businessType) {
+      toast.error('Please fill in all required fields');
       return;
     }
     
-    if (!formData.businessName || !formData.email || !formData.businessType) {
-      toast.error('Please fill in all required fields');
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
     
@@ -139,11 +144,10 @@ const SignUp = () => {
         formData.plan
       );
       
-      toast.success('Account created successfully!');
       navigate('/dashboard');
-    } catch (error) {
-      toast.error('Signup failed. Please try again.');
-      console.error(error);
+    } catch (error: any) {
+      // Error handling is done in AuthContext with toast
+      console.error('Signup error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -311,8 +315,28 @@ const SignUp = () => {
                       type="button"
                       className="bg-wastewise-green hover:bg-wastewise-dark-green"
                       onClick={() => {
-                        const planTab = document.querySelector('[data-value="plan"]') as HTMLElement;
-                        if (planTab) planTab.click();
+                        // Validate required fields before proceeding
+                        if (!formData.businessName || !formData.email || !formData.businessType || !formData.password || !formData.confirmPassword) {
+                          toast.error('Please fill in all required fields');
+                          return;
+                        }
+                        
+                        if (formData.password !== formData.confirmPassword) {
+                          toast.error('Passwords do not match');
+                          return;
+                        }
+                        
+                        if (formData.password.length < 6) {
+                          toast.error('Password must be at least 6 characters');
+                          return;
+                        }
+                        
+                        // Switch to plan tab
+                        const tabsList = document.querySelector('[role="tablist"]');
+                        const planTrigger = tabsList?.querySelector('[value="plan"]') as HTMLElement;
+                        if (planTrigger) {
+                          planTrigger.click();
+                        }
                       }}
                     >
                       Continue to Plans <ArrowRight className="ml-2 h-4 w-4" />
