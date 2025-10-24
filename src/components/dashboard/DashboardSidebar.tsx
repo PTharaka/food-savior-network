@@ -147,7 +147,7 @@ export const DashboardSidebar = ({
         </Button>
       </div>
 
-      <div className="flex-1 overflow-auto py-2 px-2">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-2 px-2">
         <nav className="grid gap-1 pt-2">
           <NavItem 
             href="/dashboard" 
