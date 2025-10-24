@@ -334,7 +334,6 @@ const SignUp = () => {
                     </Link>
                     <Button
                       type="button"
-                      className="bg-wastewise-green hover:bg-wastewise-dark-green"
                       onClick={() => {
                         // Validate required fields before proceeding
                         if (!formData.businessName || !formData.email || !formData.businessType || !formData.password || !formData.confirmPassword) {
