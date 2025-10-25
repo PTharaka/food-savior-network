@@ -35,7 +35,7 @@ const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
     <>
       <div className="fixed inset-0 bg-black/5 z-[90]" onClick={onClose} />
       
-      <Card className="absolute bottom-16 left-4 w-64 shadow-xl z-[100] p-0 overflow-hidden border-2 border-wastewise-light-green/20 bg-white animate-fade-in">
+      <Card className="fixed bottom-20 left-4 w-64 shadow-xl z-[100] p-0 overflow-hidden border-2 border-wastewise-light-green/20 bg-white animate-fade-in">
         <div className="p-4 border-b flex items-center space-x-3 bg-wastewise-light-beige">
           <Avatar className="h-10 w-10 bg-wastewise-green/20">
             <AvatarFallback className="bg-wastewise-green/20 text-wastewise-green font-medium">
