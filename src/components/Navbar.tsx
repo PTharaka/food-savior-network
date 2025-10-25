@@ -23,9 +23,13 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  const handleLogout = useCallback(() => {
-    logout();
-    navigate('/');
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   }, [logout, navigate]);
 
   const scrollToSection = useCallback((sectionId: string) => {

@@ -23,9 +23,14 @@ const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
 
   if (!isOpen) return null;
 
-  const handleLogout = () => {
-    logout();
-    onClose();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      onClose();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const handleNavigation = (path: string) => {
@@ -82,6 +87,7 @@ const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
           <Button 
             variant="ghost" 
             className="w-full justify-start px-4 py-2 h-auto hover:bg-wastewise-light-green/10 transition-colors duration-200"
+            onClick={() => window.open('mailto:support@wastewise.com?subject=Help%20Request', '_blank')}
           >
             <HelpCircle className="h-4 w-4 mr-3" />
             <span className="text-sm">Help & Support</span>

@@ -274,9 +274,14 @@ export const DashboardSidebar = ({
               variant="ghost" 
               size="icon"
               className="ml-auto text-wastewise-gray hover:text-wastewise-dark-green transition-colors duration-200"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
-                logout();
+                try {
+                  await logout();
+                  navigate('/login');
+                } catch (error) {
+                  console.error('Logout failed:', error);
+                }
               }}
             >
               <LogOut className="h-4 w-4" />
