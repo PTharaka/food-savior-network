@@ -68,17 +68,17 @@ const NavItem = ({
         }
       }}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200",
+        "flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-all duration-200",
         active
           ? "bg-wastewise-light-green/20 text-wastewise-dark-green font-medium"
           : "text-wastewise-gray hover:bg-wastewise-light-green/10 hover:text-wastewise-dark-green",
         (disabled || isLocked) && "opacity-50 cursor-not-allowed",
-        isCollapsed && "justify-center px-2 py-3"
+        isCollapsed && "justify-center py-3"
       )}
       title={isCollapsed ? label : undefined}
     >
       <span className="flex-shrink-0">{icon}</span>
-      {!isCollapsed && <span className="truncate">{label}</span>}
+      {!isCollapsed && <span className="flex-1 min-w-0 break-words">{label}</span>}
       {!isCollapsed && isLocked && (
         <Badge variant="outline" className="ml-auto bg-wastewise-light-gray/20 text-wastewise-gray">
           {requiredTier}+
@@ -118,7 +118,7 @@ export const DashboardSidebar = ({
     if (isCollapsed) return null;
     
     return (
-      <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-3">
+      <div className="text-xs uppercase text-wastewise-gray font-medium mt-6 mb-2 px-2">
         {children}
       </div>
     );
@@ -147,8 +147,8 @@ export const DashboardSidebar = ({
         </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden py-2 px-2">
-        <nav className="grid gap-1 pt-2">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-2">
+        <nav className="grid gap-1 pt-2 px-2">
           <NavItem 
             href="/dashboard" 
             view="overview"
