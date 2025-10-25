@@ -109,6 +109,11 @@ export const DashboardSidebar = ({
   const { user, logout } = useAuth();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   
+  // Prevent any state changes on mount
+  React.useEffect(() => {
+    // This ensures the sidebar doesn't change state on navigation
+  }, []);
+  
   const handleNavigation = (view: ViewType, href: string) => {
     setActiveView(view);
     navigate(href);

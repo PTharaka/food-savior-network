@@ -29,7 +29,18 @@ const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState<ViewType>(initialView);
   const [showProfile, setShowProfile] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('sidebar-collapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
+  
+  const toggleSidebar = () => {
+    setSidebarCollapsed(prev => {
+      const newValue = !prev;
+      localStorage.setItem('sidebar-collapsed', JSON.stringify(newValue));
+      return newValue;
+    });
+  };
   
   useEffect(() => {
     if (initialView === 'profile') {
@@ -448,7 +459,7 @@ const Dashboard: React.FC<DashboardProps> = ({ initialView = 'overview' }) => {
           setShowProfile(false);
         }}
         isCollapsed={sidebarCollapsed}
-        toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        toggleSidebar={toggleSidebar}
       />
       
       <div className={`flex-1 ${sidebarCollapsed ? 'ml-16' : 'ml-64'} transition-all duration-300`}>

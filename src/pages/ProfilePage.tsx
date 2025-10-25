@@ -11,7 +11,19 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('profile');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('sidebar-collapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
   const isMobile = useIsMobile();
+  
+  const toggleSidebar = () => {
+    setSidebarCollapsed(prev => {
+      const newValue = !prev;
+      localStorage.setItem('sidebar-collapsed', JSON.stringify(newValue));
+      return newValue;
+    });
+  };
   
   return (
     <div className="min-h-screen flex overflow-hidden bg-wastewise-cream/50">
@@ -25,8 +37,6 @@ const ProfilePage = () => {
       
       {/* Sidebar */}
       <div className={`
-        ${isMobile ? 'fixed' : 'relative'} 
-        h-full w-64 z-40 bg-white transition-transform duration-300 ease-in-out
         ${isMobile && !sidebarOpen ? '-translate-x-full' : 'translate-x-0'}
       `}>
         <DashboardSidebar 
@@ -36,11 +46,13 @@ const ProfilePage = () => {
             navigate(`/dashboard/${view === 'overview' ? '' : view}`);
             if (isMobile) setSidebarOpen(false);
           }}
+          isCollapsed={sidebarCollapsed}
+          toggleSidebar={toggleSidebar}
         />
       </div>
       
       {/* Main Content */}
-      <div className={`flex-1 flex flex-col overflow-hidden ${!isMobile ? 'ml-0' : ''}`}>
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <header className="bg-white shadow-sm py-3 px-4 sm:py-4 sm:px-6 border-b">
           <div className="flex items-center gap-3">
