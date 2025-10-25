@@ -286,7 +286,8 @@ export const DashboardSidebar = ({
         
         {profileMenuOpen && <UserProfileMenu 
           isOpen={profileMenuOpen} 
-          onClose={() => setProfileMenuOpen(false)} 
+          onClose={() => setProfileMenuOpen(false)}
+          isCollapsed={isCollapsed}
         />}
       </div>
     </div>

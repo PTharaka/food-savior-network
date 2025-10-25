@@ -36,20 +36,17 @@ const ProfilePage = () => {
       )}
       
       {/* Sidebar */}
-      <div className={`
-        ${isMobile && !sidebarOpen ? '-translate-x-full' : 'translate-x-0'}
-      `}>
-        <DashboardSidebar 
-          onProfileClick={() => {}}
-          activeView="profile"
-          setActiveView={(view) => {
-            navigate(`/dashboard/${view === 'overview' ? '' : view}`);
-            if (isMobile) setSidebarOpen(false);
-          }}
-          isCollapsed={sidebarCollapsed}
-          toggleSidebar={toggleSidebar}
-        />
-      </div>
+      <DashboardSidebar 
+        className={isMobile && !sidebarOpen ? '-translate-x-full' : ''}
+        onProfileClick={() => {}}
+        activeView="profile"
+        setActiveView={(view) => {
+          navigate(`/dashboard/${view === 'overview' ? '' : view}`);
+          if (isMobile) setSidebarOpen(false);
+        }}
+        isCollapsed={sidebarCollapsed}
+        toggleSidebar={toggleSidebar}
+      />
       
       {/* Main Content */}
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
