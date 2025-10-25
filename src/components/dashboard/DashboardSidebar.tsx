@@ -131,7 +131,7 @@ export const DashboardSidebar = ({
 
   return (
     <div className={cn(
-      "h-screen flex flex-col border-r border-wastewise-light-gray/20 bg-white fixed transition-all duration-300 z-20",
+      "h-screen flex flex-col border-r border-wastewise-light-gray/20 bg-white fixed top-0 left-0 transition-all duration-300 z-20",
       isCollapsed ? "w-16" : "w-64",
       className
     )}>
@@ -152,7 +152,7 @@ export const DashboardSidebar = ({
         </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden py-2">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-2 flex-shrink-0">
         <nav className="grid gap-1 pt-2 px-2">
           <NavItem 
             href="/dashboard" 
@@ -246,7 +246,7 @@ export const DashboardSidebar = ({
         </nav>
       </div>
 
-      <div className="mt-auto p-3 border-t border-wastewise-light-gray/20 relative">
+      <div className="mt-auto p-3 border-t border-wastewise-light-gray/20 relative flex-shrink-0">
         <div 
           className={cn(
             "flex items-center gap-2 cursor-pointer hover:bg-wastewise-light-green/10 p-2 rounded-lg transition-all duration-200",
