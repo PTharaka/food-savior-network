@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import { SendIcon, CheckCircle } from 'lucide-react';
 import { z } from 'zod';
 
-// Validation schema for contact form
 const contactSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
   email: z.string().trim().email('Invalid email address').max(255, 'Email must be less than 255 characters'),
