@@ -36,6 +36,26 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
+    // Check rate limit: 10 requests per hour
+    const { data: rateLimitOk, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
+      _user_id: user.id,
+      _endpoint: 'generate-insights',
+      _max_requests: 10,
+      _window_minutes: 60
+    });
+
+    if (rateLimitError || !rateLimitOk) {
+      console.log('Rate limit exceeded for user:', user.id);
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': '3600'
+        },
+      });
+    }
+
     // Get user's waste entries from the last 30 days
     const { data: wasteEntries, error: wasteError } = await supabase
       .from('waste_entries')

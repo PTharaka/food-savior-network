@@ -23,6 +23,26 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
+    // Check rate limit: 20 requests per hour
+    const { data: rateLimitOk, error: rateLimitError } = await supabaseClient.rpc('check_rate_limit', {
+      _user_id: user.id,
+      _endpoint: 'send-donation-notification',
+      _max_requests: 20,
+      _window_minutes: 60
+    });
+
+    if (rateLimitError || !rateLimitOk) {
+      console.log('Rate limit exceeded for user:', user.id);
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': '3600'
+        },
+      });
+    }
+
     const { donationRequestId, notificationType } = await req.json();
 
     console.log(`Sending ${notificationType} notification for donation request ${donationRequestId}`);

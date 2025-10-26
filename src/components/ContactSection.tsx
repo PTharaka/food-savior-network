@@ -1,6 +1,15 @@
 
 import React, { useState } from 'react';
 import { SendIcon, CheckCircle } from 'lucide-react';
+import { z } from 'zod';
+
+// Validation schema for contact form
+const contactSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
+  email: z.string().trim().email('Invalid email address').max(255, 'Email must be less than 255 characters'),
+  company: z.string().trim().min(1, 'Company name is required').max(200, 'Company name must be less than 200 characters'),
+  message: z.string().max(2000, 'Message must be less than 2000 characters').optional()
+});
 
 const ContactSection: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -10,6 +19,7 @@ const ContactSection: React.FC = () => {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -17,26 +27,49 @@ const ContactSection: React.FC = () => {
       ...prev,
       [name]: value
     }));
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you would send this data to your backend
-    console.log('Form submitted:', formState);
-    // Show success message
-    setSubmitted(true);
-    // Reset form
-    setFormState({
-      name: '',
-      email: '',
-      company: '',
-      message: ''
-    });
+    
+    // Validate form data
+    try {
+      contactSchema.parse(formState);
+      setErrors({});
+      
+      // In a real app, you would send this data to your backend
+      console.log('Form submitted:', formState);
+      
+      // Show success message
+      setSubmitted(true);
+      
+      // Reset form
+      setFormState({
+        name: '',
+        email: '',
+        company: '',
+        message: ''
+      });
 
-    // Reset the submitted state after 5 seconds
-    setTimeout(() => {
-      setSubmitted(false);
-    }, 5000);
+      // Reset the submitted state after 5 seconds
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 5000);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: Record<string, string> = {};
+        error.errors.forEach(err => {
+          if (err.path[0]) {
+            newErrors[err.path[0].toString()] = err.message;
+          }
+        });
+        setErrors(newErrors);
+      }
+    }
   };
 
   return (
@@ -77,9 +110,12 @@ const ContactSection: React.FC = () => {
                       value={formState.name} 
                       onChange={handleChange} 
                       required 
-                      className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all" 
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all ${
+                        errors.name ? 'border-red-500' : 'border-wastewise-light-gray'
+                      }`}
                       placeholder="Your name" 
                     />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-wastewise-dark-gray mb-1">
@@ -92,9 +128,12 @@ const ContactSection: React.FC = () => {
                       value={formState.email} 
                       onChange={handleChange} 
                       required 
-                      className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all" 
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all ${
+                        errors.email ? 'border-red-500' : 'border-wastewise-light-gray'
+                      }`}
                       placeholder="you@company.com" 
                     />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                   </div>
                 </div>
                 <div>
@@ -108,9 +147,12 @@ const ContactSection: React.FC = () => {
                     value={formState.company} 
                     onChange={handleChange} 
                     required 
-                    className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all" 
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all ${
+                      errors.company ? 'border-red-500' : 'border-wastewise-light-gray'
+                    }`}
                     placeholder="Your company" 
                   />
+                  {errors.company && <p className="text-red-500 text-sm mt-1">{errors.company}</p>}
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-wastewise-dark-gray mb-1">
@@ -122,9 +164,12 @@ const ContactSection: React.FC = () => {
                     value={formState.message} 
                     onChange={handleChange} 
                     rows={4} 
-                    className="w-full px-4 py-3 border border-wastewise-light-gray rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all" 
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-wastewise-green focus:border-wastewise-green transition-all ${
+                      errors.message ? 'border-red-500' : 'border-wastewise-light-gray'
+                    }`}
                     placeholder="Tell us about your business and needs..."
                   ></textarea>
+                  {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
                 </div>
                 <button type="submit" className="btn-primary flex items-center justify-center gap-2">
                   <span>Request Early Access</span>

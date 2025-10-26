@@ -23,6 +23,26 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
+    // Check rate limit: 50 requests per day
+    const { data: rateLimitOk, error: rateLimitError } = await supabaseClient.rpc('check_rate_limit', {
+      _user_id: user.id,
+      _endpoint: 'generate-tax-document',
+      _max_requests: 50,
+      _window_minutes: 1440
+    });
+
+    if (rateLimitError || !rateLimitOk) {
+      console.log('Rate limit exceeded for user:', user.id);
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again tomorrow.' }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': '86400'
+        },
+      });
+    }
+
     const { documentType, taxYear, period } = await req.json();
 
     console.log(`Generating ${documentType} for year ${taxYear}, period ${period}`);
