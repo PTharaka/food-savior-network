@@ -35,13 +35,22 @@ class POSIntegrationService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
+      // Encrypt the API key before storing
+      const { data: encryptedKey, error: encryptError } = await supabase
+        .rpc('encrypt_pos_api_key', { api_key: config.apiKey });
+
+      if (encryptError) {
+        console.error('Encryption error:', encryptError);
+        throw new Error('Failed to encrypt API key');
+      }
+
       // In production, validate API key with provider first
       const { data, error } = await supabase
         .from('pos_connections')
         .insert({
           user_id: user.id,
           provider: config.provider,
-          api_key_encrypted: config.apiKey, // In production, encrypt this
+          api_key_encrypted: encryptedKey,
           store_id: config.storeId,
           sync_frequency: config.syncFrequency || 'hourly',
           status: 'active'

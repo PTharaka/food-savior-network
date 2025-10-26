@@ -39,6 +39,20 @@ serve(async (req) => {
       throw new Error('Connection not found');
     }
 
+    // Decrypt the API key using service role client
+    const serviceClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const { data: decryptedKey, error: decryptError } = await serviceClient
+      .rpc('decrypt_pos_api_key', { encrypted_key: connection.api_key_encrypted });
+
+    if (decryptError || !decryptedKey) {
+      console.error('Decryption error:', decryptError);
+      throw new Error('Failed to decrypt API key');
+    }
+
     let inventoryItems = [];
     let syncError = null;
 
@@ -47,13 +61,13 @@ serve(async (req) => {
       try {
         // Square API integration would go here
         // For now, return mock data with proper structure
-        inventoryItems = await syncSquareInventory(connection.api_key_encrypted, connection.store_id);
+        inventoryItems = await syncSquareInventory(decryptedKey, connection.store_id);
       } catch (error) {
         syncError = { message: error.message, provider: 'square' };
       }
     } else if (provider === 'toast') {
       try {
-        inventoryItems = await syncToastInventory(connection.api_key_encrypted, connection.store_id);
+        inventoryItems = await syncToastInventory(decryptedKey, connection.store_id);
       } catch (error) {
         syncError = { message: error.message, provider: 'toast' };
       }

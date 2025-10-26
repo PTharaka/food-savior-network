@@ -506,7 +506,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      decrypt_pos_api_key: { Args: { encrypted_key: string }; Returns: string }
+      encrypt_pos_api_key: { Args: { api_key: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
