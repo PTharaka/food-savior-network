@@ -129,11 +129,11 @@ const HeroSection: React.FC = () => {
               transition={{ delay: 0.3 }}
             >
               Turn Food Waste into{" "}
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-wastewise-green to-wastewise-light-green bg-clip-text text-transparent">
                 Savings
               </span>{" "}
               and{" "}
-              <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-wastewise-light-green to-wastewise-green bg-clip-text text-transparent">
                 Social Good
               </span>
             </motion.h1>
