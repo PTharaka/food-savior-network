@@ -98,12 +98,12 @@ const Navbar = () => {
               >
                 Pricing
               </button>
-              <button 
-                onClick={() => scrollToSection('about')} 
+              <Link 
+                to="/about" 
                 className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
               >
                 About Us
-              </button>
+              </Link>
               <Link to="/login" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
                 Login
               </Link>
@@ -168,12 +168,13 @@ const Navbar = () => {
               >
                 Pricing
               </button>
-              <button 
-                onClick={() => scrollToSection('about')} 
+              <Link
+                to="/about" 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"
+                onClick={closeMobileMenu}
               >
                 About Us
-              </button>
+              </Link>
               <Link
                 to="/login" 
                 className="text-xl font-medium text-wastewise-dark-gray hover:text-wastewise-green transition-colors"

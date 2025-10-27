@@ -11,9 +11,9 @@ const About = () => {
     <div className="min-h-screen bg-wastewise-cream">
       <Navbar />
       
-      <main>
+      <main className="animate-fade-in">
         {/* Hero Section */}
-        <section className="py-20 px-6 bg-wastewise-light-green/10">
+        <section className="py-20 px-6 bg-wastewise-light-green/10 animate-fade-in">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="heading-lg mb-6">About WasteWise</h1>
             <p className="text-xl text-wastewise-gray max-w-3xl mx-auto mb-8">
