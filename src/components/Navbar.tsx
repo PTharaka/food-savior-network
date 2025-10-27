@@ -107,10 +107,7 @@ const Navbar = () => {
               <Link to="/login" className="text-wastewise-dark-gray hover:text-wastewise-green transition-colors">
                 Login
               </Link>
-              <Link 
-                to="/signup" 
-                className="inline-flex items-center justify-center bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-6 py-2 rounded-full font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
-              >
+              <Link to="/signup" className="btn-primary">
                 Get Early Access
               </Link>
             </>
@@ -187,7 +184,7 @@ const Navbar = () => {
               </Link>
               <Link 
                 to="/signup" 
-                className="inline-flex items-center justify-center bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 text-center"
+                className="btn-primary text-center"
                 onClick={closeMobileMenu}
               >
                 Get Early Access
