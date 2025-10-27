@@ -181,23 +181,44 @@ const HeroSection: React.FC = () => {
                 {[1, 2, 3, 4, 5].map((i) => (
                   <motion.div 
                     key={i}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-background flex items-center justify-center text-primary-foreground text-xs font-bold cursor-pointer"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-wastewise-green to-wastewise-light-green border-2 border-background flex items-center justify-center text-white text-xs font-bold cursor-pointer"
                     initial={{ opacity: 0, scale: 0, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    animate={{ 
+                      opacity: 1, 
+                      scale: 1, 
+                      y: [0, -8, 0],
+                      rotate: [0, 5, -5, 0]
+                    }}
                     transition={{ 
-                      delay: 0.7 + i * 0.1,
-                      duration: 0.5,
-                      type: "spring",
-                      stiffness: 200,
-                      damping: 15
+                      opacity: { delay: 0.7 + i * 0.1, duration: 0.5 },
+                      scale: { 
+                        delay: 0.7 + i * 0.1,
+                        duration: 0.5,
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 15
+                      },
+                      y: {
+                        delay: 1.2 + i * 0.2,
+                        duration: 2 + i * 0.3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      },
+                      rotate: {
+                        delay: 1.5 + i * 0.2,
+                        duration: 3 + i * 0.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }
                     }}
                     whileHover={{ 
-                      scale: 1.2,
-                      y: -5,
+                      scale: 1.3,
+                      y: -10,
+                      rotate: 0,
                       zIndex: 10,
-                      transition: { duration: 0.2 }
+                      transition: { duration: 0.3, ease: "easeOut" }
                     }}
-                    whileTap={{ scale: 0.95 }}
+                    whileTap={{ scale: 0.9 }}
                   >
                     {i}
                   </motion.div>
