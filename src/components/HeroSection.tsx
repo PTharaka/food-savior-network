@@ -157,7 +157,7 @@ const HeroSection: React.FC = () => {
             >
               <a 
                 href="#contact" 
-                className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-wastewise-green to-wastewise-light-green hover:from-wastewise-dark-green hover:to-wastewise-green text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
                 Get Early Access 
                 <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
