@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.1";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -43,7 +44,29 @@ serve(async (req) => {
       });
     }
 
-    const { donationRequestId, notificationType } = await req.json();
+    // Validate input
+    const requestSchema = z.object({
+      donationRequestId: z.string().uuid('Invalid donation request ID format'),
+      notificationType: z.enum(['email', 'sms', 'email_sms'], {
+        errorMap: () => ({ message: 'Notification type must be email, sms, or email_sms' })
+      })
+    });
+
+    const rawBody = await req.json();
+    const validationResult = requestSchema.safeParse(rawBody);
+    
+    if (!validationResult.success) {
+      console.log('Validation error:', validationResult.error.format());
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid input parameters',
+          details: validationResult.error.format()
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { donationRequestId, notificationType } = validationResult.data;
 
     console.log(`Sending ${notificationType} notification for donation request ${donationRequestId}`);
 
