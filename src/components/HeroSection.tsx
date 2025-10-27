@@ -179,12 +179,28 @@ const HeroSection: React.FC = () => {
             >
               <div className="flex -space-x-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div 
+                  <motion.div 
                     key={i}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-background flex items-center justify-center text-primary-foreground text-xs font-bold"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-background flex items-center justify-center text-primary-foreground text-xs font-bold cursor-pointer"
+                    initial={{ opacity: 0, scale: 0, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ 
+                      delay: 0.7 + i * 0.1,
+                      duration: 0.5,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 15
+                    }}
+                    whileHover={{ 
+                      scale: 1.2,
+                      y: -5,
+                      zIndex: 10,
+                      transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {i}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
               <div className="text-sm text-muted-foreground">
