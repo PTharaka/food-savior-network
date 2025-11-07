@@ -33,27 +33,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         
         if (session?.user) {
-          // Fetch user profile from profiles table
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
-
-          if (profile) {
-            setUser({
-              id: profile.id,
-              email: profile.email || session.user.email || '',
-              businessName: profile.business_name || '',
-              businessType: profile.business_type || '',
-              subscriptionTier: (profile.subscription_tier as SubscriptionTier) || 'free',
-            });
-          }
+          // Use user metadata directly from auth session
+          const metadata = session.user.user_metadata || {};
+          setUser({
+            id: session.user.id,
+            email: session.user.email || '',
+            businessName: metadata.business_name || '',
+            businessType: metadata.business_type || '',
+            subscriptionTier: (metadata.subscription_tier as SubscriptionTier) || 'free',
+          });
         } else {
           setUser(null);
         }
@@ -65,26 +58,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .maybeSingle()
-          .then(({ data: profile }) => {
-            if (profile) {
-              setUser({
-                id: profile.id,
-                email: profile.email || session.user.email || '',
-                businessName: profile.business_name || '',
-                businessType: profile.business_type || '',
-                subscriptionTier: (profile.subscription_tier as SubscriptionTier) || 'free',
-              });
-            }
-            setIsLoading(false);
-          });
-      } else {
-        setIsLoading(false);
+        const metadata = session.user.user_metadata || {};
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          businessName: metadata.business_name || '',
+          businessType: metadata.business_type || '',
+          subscriptionTier: (metadata.subscription_tier as SubscriptionTier) || 'free',
+        });
       }
+      setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
