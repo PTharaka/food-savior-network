@@ -45,7 +45,7 @@ class POSIntegrationService {
       }
 
       // In production, validate API key with provider first
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('pos_connections')
         .insert({
           user_id: user.id,
@@ -72,7 +72,7 @@ class POSIntegrationService {
 
   async disconnectFromPOS(connectionId: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('pos_connections')
         .delete()
         .eq('id', connectionId);
@@ -90,7 +90,7 @@ class POSIntegrationService {
 
   async syncInventory(connectionId: string): Promise<any[]> {
     try {
-      const { data: connection } = await supabase
+      const { data: connection } = await (supabase as any)
         .from('pos_connections')
         .select('*')
         .eq('id', connectionId)
@@ -120,7 +120,7 @@ class POSIntegrationService {
 
   async getConnections(): Promise<POSConnection[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('pos_connections')
         .select('id, provider, status, last_synced_at')
         .order('created_at', { ascending: false });

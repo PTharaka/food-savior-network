@@ -166,7 +166,7 @@ class GeoLocationService {
       }
 
       // Get all verified charities from database
-      const { data: charities, error } = await supabase
+      const { data: charities, error } = await (supabase as any)
         .from('charity_organizations')
         .select('*')
         .eq('verified', true);
