@@ -15,6 +15,11 @@ interface LocationData {
   address: string;
   impactPercentage: number;
   category: 'donation' | 'waste';
+  totalDonations?: number;
+  totalValue?: number;
+  itemsHelped?: number;
+  wasteReduced?: number;
+  co2Saved?: number;
 }
 
 const TopGeographies: React.FC = () => {
@@ -25,7 +30,7 @@ const TopGeographies: React.FC = () => {
   const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
-    // Fetch charity locations from database
+    // Fetch charity locations with impact data from database
     const fetchLocations = async () => {
       try {
         const { data: charities, error } = await (supabase as any)
@@ -41,16 +46,58 @@ const TopGeographies: React.FC = () => {
         }
 
         if (charities && charities.length > 0) {
-          const mappedLocations: LocationData[] = charities.map((charity: any, index: number) => ({
-            id: charity.id,
-            name: charity.name,
-            type: charity.type,
-            latitude: Number(charity.latitude),
-            longitude: Number(charity.longitude),
-            address: charity.address,
-            impactPercentage: Math.floor(Math.random() * 50) + 20, // Demo percentages
-            category: index % 3 === 0 ? 'waste' : 'donation'
-          }));
+          // Fetch donation and waste data for impact calculation
+          const { data: donations } = await (supabase as any)
+            .from('donations')
+            .select('recipient_name, quantity, estimated_value')
+            .eq('status', 'completed');
+
+          const { data: wasteEntries } = await (supabase as any)
+            .from('waste_entries')
+            .select('quantity, cost, category');
+
+          const mappedLocations: LocationData[] = charities.map((charity: any, index: number) => {
+            // Calculate impact metrics
+            const charityDonations = donations?.filter((d: any) => 
+              d.recipient_name?.toLowerCase().includes(charity.name?.toLowerCase().split(' ')[0])
+            ) || [];
+            
+            const totalDonations = charityDonations.length;
+            const totalValue = charityDonations.reduce((sum: number, d: any) => 
+              sum + (Number(d.estimated_value) || 0), 0
+            );
+            const itemsHelped = charityDonations.reduce((sum: number, d: any) => 
+              sum + (Number(d.quantity) || 0), 0
+            );
+
+            // Waste reduction calculation (demo formula)
+            const wasteReduced = wasteEntries?.slice(0, 10).reduce((sum: any, w: any) => 
+              sum + (Number(w.quantity) || 0), 0
+            ) / charities.length || 0;
+            
+            const co2Saved = wasteReduced * 2.5; // Approx 2.5kg CO2 per kg waste diverted
+
+            const impactPercentage = Math.min(
+              Math.floor((totalDonations * 10 + itemsHelped * 2) / 10), 
+              100
+            ) || Math.floor(Math.random() * 50) + 20;
+
+            return {
+              id: charity.id,
+              name: charity.name,
+              type: charity.type,
+              latitude: Number(charity.latitude),
+              longitude: Number(charity.longitude),
+              address: charity.address,
+              impactPercentage,
+              category: index % 3 === 0 ? 'waste' : 'donation',
+              totalDonations,
+              totalValue: Math.round(totalValue),
+              itemsHelped: Math.round(itemsHelped),
+              wasteReduced: Math.round(wasteReduced),
+              co2Saved: Math.round(co2Saved)
+            };
+          });
           setLocations(mappedLocations);
         } else {
           // Demo locations if no data
@@ -63,7 +110,11 @@ const TopGeographies: React.FC = () => {
               longitude: -74.0060,
               address: 'New York, NY',
               impactPercentage: 76,
-              category: 'donation'
+              category: 'donation',
+              totalDonations: 45,
+              totalValue: 12500,
+              itemsHelped: 380,
+              co2Saved: 950
             },
             {
               id: '2',
@@ -72,8 +123,12 @@ const TopGeographies: React.FC = () => {
               latitude: 51.5074,
               longitude: -0.1278,
               address: 'London, UK',
-              impactPercentage: 15,
-              category: 'donation'
+              impactPercentage: 62,
+              category: 'donation',
+              totalDonations: 28,
+              totalValue: 8900,
+              itemsHelped: 215,
+              co2Saved: 540
             },
             {
               id: '3',
@@ -82,8 +137,10 @@ const TopGeographies: React.FC = () => {
               latitude: -1.2921,
               longitude: 36.8219,
               address: 'Nairobi, Kenya',
-              impactPercentage: 9,
-              category: 'waste'
+              impactPercentage: 54,
+              category: 'waste',
+              wasteReduced: 1200,
+              co2Saved: 3000
             },
             {
               id: '4',
@@ -92,8 +149,12 @@ const TopGeographies: React.FC = () => {
               latitude: 34.0522,
               longitude: -118.2437,
               address: 'Los Angeles, CA',
-              impactPercentage: 45,
-              category: 'donation'
+              impactPercentage: 68,
+              category: 'donation',
+              totalDonations: 32,
+              totalValue: 9800,
+              itemsHelped: 290,
+              co2Saved: 725
             }
           ]);
         }
@@ -231,21 +292,63 @@ const TopGeographies: React.FC = () => {
           ? 'linear-gradient(135deg, #10b981, #059669)'
           : 'linear-gradient(135deg, #f59e0b, #d97706)';
         
-        const popup = new mapboxgl.Popup({ offset: 30, closeButton: false })
+        // Build impact details HTML
+        let impactDetailsHTML = '';
+        if (isDonation) {
+          impactDetailsHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; padding: 8px; background: #f0fdf4; border-radius: 6px;">
+              <div>
+                <div style="font-size: 11px; color: #166534; font-weight: 600; text-transform: uppercase;">Donations</div>
+                <div style="font-size: 18px; font-weight: bold; color: #15803d;">${location.totalDonations || 0}</div>
+              </div>
+              <div>
+                <div style="font-size: 11px; color: #166534; font-weight: 600; text-transform: uppercase;">Value</div>
+                <div style="font-size: 18px; font-weight: bold; color: #15803d;">$${(location.totalValue || 0).toLocaleString()}</div>
+              </div>
+              <div>
+                <div style="font-size: 11px; color: #166534; font-weight: 600; text-transform: uppercase;">Items</div>
+                <div style="font-size: 18px; font-weight: bold; color: #15803d;">${(location.itemsHelped || 0).toLocaleString()}</div>
+              </div>
+              <div>
+                <div style="font-size: 11px; color: #166534; font-weight: 600; text-transform: uppercase;">CO₂ Saved</div>
+                <div style="font-size: 18px; font-weight: bold; color: #15803d;">${(location.co2Saved || 0).toLocaleString()}kg</div>
+              </div>
+            </div>
+          `;
+        } else {
+          impactDetailsHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; padding: 8px; background: #fffbeb; border-radius: 6px;">
+              <div>
+                <div style="font-size: 11px; color: #92400e; font-weight: 600; text-transform: uppercase;">Waste Reduced</div>
+                <div style="font-size: 18px; font-weight: bold; color: #b45309;">${(location.wasteReduced || 0).toLocaleString()}kg</div>
+              </div>
+              <div>
+                <div style="font-size: 11px; color: #92400e; font-weight: 600; text-transform: uppercase;">CO₂ Saved</div>
+                <div style="font-size: 18px; font-weight: bold; color: #b45309;">${(location.co2Saved || 0).toLocaleString()}kg</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        const popup = new mapboxgl.Popup({ offset: 30, closeButton: true, maxWidth: '320px' })
           .setHTML(`
-            <div style="padding: 12px; min-width: 200px; background: linear-gradient(to bottom, #ffffff, #f9fafb);">
-              <h3 style="font-weight: bold; margin: 0 0 6px 0; color: #1f2937; font-size: 15px;">${location.name}</h3>
+            <div style="padding: 14px; min-width: 260px; background: linear-gradient(to bottom, #ffffff, #f9fafb);">
+              <h3 style="font-weight: bold; margin: 0 0 6px 0; color: #1f2937; font-size: 16px;">${location.name}</h3>
               <p style="margin: 4px 0; color: #6b7280; font-size: 13px; font-weight: 500;">${location.type}</p>
-              <p style="margin: 4px 0; color: #9ca3af; font-size: 12px; display: flex; align-items: center;">
+              <p style="margin: 6px 0; color: #9ca3af; font-size: 12px; display: flex; align-items: center;">
                 <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24" style="margin-right: 4px;">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                 </svg>
                 ${location.address}
               </p>
-              <div style="margin-top: 10px; padding: 8px; background: ${popupGradient}; border-radius: 6px; display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-weight: bold; color: white; font-size: 18px;">${location.impactPercentage}%</span>
-                <span style="color: rgba(255,255,255,0.9); font-size: 12px; text-transform: uppercase; font-weight: 600;">${location.category}</span>
+              <div style="margin-top: 10px; padding: 10px; background: ${popupGradient}; border-radius: 6px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <div style="font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 500; text-transform: uppercase;">Impact Score</div>
+                  <span style="font-weight: bold; color: white; font-size: 24px;">${location.impactPercentage}%</span>
+                </div>
+                <span style="color: rgba(255,255,255,0.9); font-size: 11px; text-transform: uppercase; font-weight: 600; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;">${location.category}</span>
               </div>
+              ${impactDetailsHTML}
             </div>
           `);
 
