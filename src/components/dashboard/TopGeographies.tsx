@@ -4,6 +4,7 @@ import { MapPin, ExternalLink, Globe } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
+import ImpactReportModal from './ImpactReportModal';
 
 interface LocationData {
   id: string;
@@ -21,6 +22,7 @@ const TopGeographies: React.FC = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [locations, setLocations] = useState<LocationData[]>([]);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
     // Fetch charity locations from database
@@ -299,11 +301,20 @@ const TopGeographies: React.FC = () => {
           </div>
         </div>
         
-        <button className="w-full mt-4 text-sm flex items-center justify-center text-blue-600 hover:text-blue-800 font-medium transform hover:scale-105 transition-all">
+        <button 
+          onClick={() => setShowReportModal(true)}
+          className="w-full mt-4 text-sm flex items-center justify-center text-blue-600 hover:text-blue-800 font-medium transform hover:scale-105 transition-all"
+        >
           View detailed impact report
           <ExternalLink className="h-3 w-3 ml-1" />
         </button>
       </CardContent>
+      
+      <ImpactReportModal 
+        open={showReportModal}
+        onOpenChange={setShowReportModal}
+        locations={locations}
+      />
     </Card>
   );
 };
