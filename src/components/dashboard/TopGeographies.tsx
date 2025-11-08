@@ -120,7 +120,7 @@ const TopGeographies: React.FC = () => {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: [0, 20],
         zoom: 1.5,
         projection: 'globe' as any
@@ -129,13 +129,13 @@ const TopGeographies: React.FC = () => {
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
       map.current.scrollZoom.disable();
 
-      // Add atmosphere
+      // Add atmosphere with green tint
       map.current.on('style.load', () => {
         if (map.current) {
           map.current.setFog({
-            color: 'rgb(255, 255, 255)',
-            'high-color': 'rgb(200, 200, 225)',
-            'horizon-blend': 0.2,
+            color: 'rgb(230, 255, 240)',
+            'high-color': 'rgb(180, 230, 200)',
+            'horizon-blend': 0.3,
           });
         }
       });
@@ -179,39 +179,72 @@ const TopGeographies: React.FC = () => {
       locations.forEach((location) => {
         const el = document.createElement('div');
         el.className = 'custom-marker';
-        el.style.width = '32px';
-        el.style.height = '32px';
+        el.style.width = '48px';
+        el.style.height = '48px';
         el.style.cursor = 'pointer';
+        el.style.position = 'relative';
         
-        const color = location.category === 'donation' ? '#4CAF50' : '#FFC107';
+        const isDonation = location.category === 'donation';
+        const gradient = isDonation 
+          ? 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)'
+          : 'linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%)';
+        
         el.innerHTML = `
           <div style="
             width: 100%;
             height: 100%;
-            background: ${color};
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulse 2s infinite;
+            position: relative;
           ">
-            <svg width="16" height="16" fill="white" viewBox="0 0 24 24">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-            </svg>
+            <div style="
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              background: ${gradient};
+              border-radius: 50%;
+              opacity: 0.3;
+              animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+            "></div>
+            <div style="
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              width: 36px;
+              height: 36px;
+              background: ${gradient};
+              border-radius: 50%;
+              border: 3px solid white;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 2px ${isDonation ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'};
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              animation: pulse 3s ease-in-out infinite;
+            ">
+              <svg width="20" height="20" fill="white" viewBox="0 0 24 24" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+            </div>
           </div>
         `;
 
-        const popup = new mapboxgl.Popup({ offset: 25, closeButton: false })
+        const popupGradient = isDonation 
+          ? 'linear-gradient(135deg, #10b981, #059669)'
+          : 'linear-gradient(135deg, #f59e0b, #d97706)';
+        
+        const popup = new mapboxgl.Popup({ offset: 30, closeButton: false })
           .setHTML(`
-            <div style="padding: 8px; min-width: 180px;">
-              <h3 style="font-weight: bold; margin: 0 0 4px 0; color: #1f2937;">${location.name}</h3>
-              <p style="margin: 4px 0; color: #6b7280; font-size: 13px;">${location.type}</p>
-              <p style="margin: 4px 0; color: #6b7280; font-size: 12px;">${location.address}</p>
-              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                <span style="font-weight: bold; color: ${color}; font-size: 16px;">${location.impactPercentage}%</span>
-                <span style="color: #6b7280; font-size: 12px; margin-left: 4px;">${location.category}</span>
+            <div style="padding: 12px; min-width: 200px; background: linear-gradient(to bottom, #ffffff, #f9fafb);">
+              <h3 style="font-weight: bold; margin: 0 0 6px 0; color: #1f2937; font-size: 15px;">${location.name}</h3>
+              <p style="margin: 4px 0; color: #6b7280; font-size: 13px; font-weight: 500;">${location.type}</p>
+              <p style="margin: 4px 0; color: #9ca3af; font-size: 12px; display: flex; align-items: center;">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24" style="margin-right: 4px;">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                </svg>
+                ${location.address}
+              </p>
+              <div style="margin-top: 10px; padding: 8px; background: ${popupGradient}; border-radius: 6px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-weight: bold; color: white; font-size: 18px;">${location.impactPercentage}%</span>
+                <span style="color: rgba(255,255,255,0.9); font-size: 12px; text-transform: uppercase; font-weight: 600;">${location.category}</span>
               </div>
             </div>
           `);
@@ -259,15 +292,26 @@ const TopGeographies: React.FC = () => {
               <style>
                 {`
                   @keyframes pulse {
-                    0%, 100% { transform: scale(1); opacity: 1; }
-                    50% { transform: scale(1.1); opacity: 0.8; }
+                    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+                    50% { transform: translate(-50%, -50%) scale(1.08); }
+                  }
+                  @keyframes ping {
+                    75%, 100% {
+                      transform: scale(2);
+                      opacity: 0;
+                    }
                   }
                   .mapboxgl-popup-content {
-                    border-radius: 8px !important;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+                    border-radius: 12px !important;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+                    padding: 0 !important;
+                    overflow: hidden;
                   }
                   .mapboxgl-popup-tip {
-                    border-top-color: white !important;
+                    border-top-color: #f9fafb !important;
+                  }
+                  .mapboxgl-ctrl-logo {
+                    display: none !important;
                   }
                 `}
               </style>
