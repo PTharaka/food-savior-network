@@ -41,15 +41,9 @@ const LoginForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         <div className="flex items-start gap-2">
           <Info size={18} className="text-wastewise-dark-green mt-0.5" />
           <div>
-            <p className="text-sm text-wastewise-dark-gray mb-2">
-              <strong>Demo Accounts:</strong>
+            <p className="text-sm text-wastewise-dark-gray">
+              <strong>New here?</strong> Create an account using the <a href="/signup" className="text-wastewise-green underline font-medium">Sign Up</a> page. Email confirmation is required before login unless disabled.
             </p>
-            <ul className="text-sm text-wastewise-gray space-y-2">
-              <li><strong>Free Tier:</strong> demo@wastewise.com / demo123</li>
-              <li><strong>Starter Tier:</strong> starter@wastewise.com / starter123</li>
-              <li><strong>Pro Tier:</strong> pro@wastewise.com / pro123</li>
-              <li><strong>Trial User:</strong> trial@wastewise.com / trial123</li>
-            </ul>
           </div>
         </div>
       </div>
