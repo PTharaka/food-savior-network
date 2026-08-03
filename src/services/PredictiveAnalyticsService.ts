@@ -1,5 +1,8 @@
 
 import { toast } from "sonner";
+import LoggerService from "./LoggerService";
+
+const logger = LoggerService.getInstance();
 
 interface WasteItem {
   id: string;
@@ -20,76 +23,110 @@ interface PredictionResult {
   potentialSavings: number;
 }
 
+interface AnalyticsConfig {
+  removeArtificialDelays?: boolean;
+}
+
 class PredictiveAnalyticsService {
   private static instance: PredictiveAnalyticsService;
+  private config: AnalyticsConfig;
 
-  private constructor() {}
+  private constructor(config: AnalyticsConfig = {}) {
+    this.config = {
+      removeArtificialDelays: false,
+      ...config
+    };
+  }
 
-  public static getInstance(): PredictiveAnalyticsService {
+  public static getInstance(config?: AnalyticsConfig): PredictiveAnalyticsService {
     if (!PredictiveAnalyticsService.instance) {
-      PredictiveAnalyticsService.instance = new PredictiveAnalyticsService();
+      PredictiveAnalyticsService.instance = new PredictiveAnalyticsService(config);
     }
     return PredictiveAnalyticsService.instance;
   }
 
+  /**
+   * Configure the service (e.g., remove delays in production)
+   */
+  public configure(config: AnalyticsConfig): void {
+    this.config = { ...this.config, ...config };
+    logger.info('PredictiveAnalyticsService configured', { config: this.config });
+  }
+
   analyzeWastePatterns(wasteHistory: WasteItem[]): Promise<{ patterns: any[], totalWaste: number }> {
-    // Mock implementation - in a real app this would use ML algorithms
     return new Promise((resolve) => {
+      const delay = this.config.removeArtificialDelays ? 0 : 1500;
+      
       setTimeout(() => {
-        // Group waste by item name
-        const wasteByItem = wasteHistory.reduce((acc: any, item) => {
-          if (!acc[item.name]) {
-            acc[item.name] = { 
-              totalQuantity: 0, 
-              occurrences: 0, 
-              reasons: {} 
-            };
+        // Group waste by item name with pre-computed map for better performance
+        const wasteByItem = new Map<string, { 
+          totalQuantity: number; 
+          occurrences: number; 
+          reasons: Map<string, number> 
+        }>();
+
+        for (const item of wasteHistory) {
+          let itemData = wasteByItem.get(item.name);
+          if (!itemData) {
+            itemData = { totalQuantity: 0, occurrences: 0, reasons: new Map() };
+            wasteByItem.set(item.name, itemData);
           }
-          acc[item.name].totalQuantity += item.quantity;
-          acc[item.name].occurrences += 1;
+          itemData.totalQuantity += item.quantity;
+          itemData.occurrences += 1;
           
-          if (!acc[item.name].reasons[item.reason]) {
-            acc[item.name].reasons[item.reason] = 0;
-          }
-          acc[item.name].reasons[item.reason] += 1;
-          
-          return acc;
-        }, {});
+          const currentCount = itemData.reasons.get(item.reason) || 0;
+          itemData.reasons.set(item.reason, currentCount + 1);
+        }
 
         // Calculate total waste
         const totalWaste = wasteHistory.reduce((sum, item) => sum + item.quantity, 0);
 
         // Convert to array for display
-        const patterns = Object.entries(wasteByItem).map(([itemName, data]: [string, any]) => ({
-          itemName,
-          averageQuantity: data.totalQuantity / data.occurrences,
-          frequency: data.occurrences,
-          commonReason: Object.entries(data.reasons).sort((a: any, b: any) => b[1] - a[1])[0][0],
-          totalQuantity: data.totalQuantity
-        }));
+        const patterns = Array.from(wasteByItem.entries()).map(([itemName, data]) => {
+          const commonReason = Array.from(data.reasons.entries())
+            .sort((a, b) => b[1] - a[1])[0]?.[0] || 'Unknown';
+          
+          return {
+            itemName,
+            averageQuantity: data.totalQuantity / data.occurrences,
+            frequency: data.occurrences,
+            commonReason,
+            totalQuantity: data.totalQuantity
+          };
+        });
 
-        console.log('Analyzed waste patterns', patterns);
+        logger.info('Analyzed waste patterns', { patternCount: patterns.length, totalWaste });
         resolve({ patterns, totalWaste });
-      }, 1500);
+      }, delay);
     });
   }
 
   predictFutureWaste(inventory: any[], wasteHistory: WasteItem[]): Promise<PredictionResult[]> {
-    // Mock implementation - would use real ML models in production
     return new Promise((resolve) => {
+      const delay = this.config.removeArtificialDelays ? 0 : 2000;
+      
       setTimeout(() => {
+        // Pre-compute waste history map for O(1) lookups instead of filtering repeatedly
+        const wasteHistoryMap = new Map<string, WasteItem[]>();
+        for (const waste of wasteHistory) {
+          const key = waste.name.toLowerCase();
+          const existing = wasteHistoryMap.get(key) || [];
+          existing.push(waste);
+          wasteHistoryMap.set(key, existing);
+        }
+
         const predictions = inventory.map(item => {
-          // Find waste history for this item
-          const itemWasteHistory = wasteHistory.filter(w => w.name.toLowerCase() === item.name.toLowerCase());
+          const itemKey = item.name.toLowerCase();
+          const itemWasteHistory = wasteHistoryMap.get(itemKey) || [];
           
           // Calculate waste rate based on history
           const wasteRate = itemWasteHistory.length > 0 
             ? itemWasteHistory.reduce((sum, w) => sum + w.quantity, 0) / itemWasteHistory.length / item.quantity
-            : Math.random() * 0.3; // Random waste rate if no history
+            : Math.random() * 0.3;
           
           // Generate prediction
           const predictedWaste = Math.round(item.quantity * wasteRate * 10) / 10;
-          const wasteConfidence = 0.5 + Math.random() * 0.4; // Random confidence between 50% and 90%
+          const wasteConfidence = 0.5 + Math.random() * 0.4;
           
           // Determine suggested action
           let suggestedAction: 'reduce_ordering' | 'donate_soon' | 'normal' | 'stock_up' = 'normal';
@@ -98,7 +135,7 @@ class PredictiveAnalyticsService {
           else if (wasteRate < 0.05) suggestedAction = 'stock_up';
           
           // Calculate potential savings
-          const averageItemCost = 5 + Math.random() * 15; // Random cost between $5 and $20
+          const averageItemCost = 5 + Math.random() * 15;
           const potentialSavings = Math.round(predictedWaste * averageItemCost * 100) / 100;
           
           return {
@@ -112,24 +149,25 @@ class PredictiveAnalyticsService {
           };
         });
         
-        console.log('Generated waste predictions', predictions);
+        logger.info('Generated waste predictions', { predictionCount: predictions.length });
         toast.success('Waste predictions updated');
         resolve(predictions);
-      }, 2000);
+      }, delay);
     });
   }
 
   identifySurplusItems(predictions: PredictionResult[]): Promise<PredictionResult[]> {
-    // Identify items that should be donated soon to prevent waste
     return new Promise((resolve) => {
+      const delay = this.config.removeArtificialDelays ? 0 : 1000;
+      
       setTimeout(() => {
         const surplusItems = predictions.filter(p => 
           p.suggestedAction === 'donate_soon' && p.predictedWaste > 1
         );
         
-        console.log('Identified surplus items for donation', surplusItems);
+        logger.info('Identified surplus items for donation', { count: surplusItems.length });
         resolve(surplusItems);
-      }, 1000);
+      }, delay);
     });
   }
 }
