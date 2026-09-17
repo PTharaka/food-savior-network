@@ -121,10 +121,10 @@ CREATE POLICY "Users can view their own sync logs"
     )
   );
 
--- RLS Policies for charity_organizations (public read, admin write)
+-- RLS Policies for charity_organizations (authenticated read of verified records, admin write)
 CREATE POLICY "Anyone can view verified charities"
   ON public.charity_organizations FOR SELECT
-  USING (verified = true OR auth.uid() IS NOT NULL);
+  USING (verified = true AND auth.uid() IS NOT NULL);
 
 -- RLS Policies for donation_requests
 CREATE POLICY "Users can view their own donation requests"
